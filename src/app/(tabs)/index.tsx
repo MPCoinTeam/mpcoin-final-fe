@@ -1,9 +1,9 @@
 import { Image, StyleSheet, Platform } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { HelloWave } from '@/src/presentation/molecules/HelloWave';
+import ParallaxScrollView from '@/src/presentation/organisms/ParallaxScrollView';
+import { ThemedText } from '@/src/presentation/atoms/ThemedText';
+import { ThemedView } from '@/src/presentation/atoms/ThemedView';
 
 export default function HomeScreen() {
   return (

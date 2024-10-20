@@ -1,17 +1,17 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { JsDrawer } from '../presentation/templates/js-drawer';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { SplashScreen } from 'expo-router';
+import { ThemeProvider } from '@react-navigation/native';
+import HeaderLayout from '@/presentation/organisms/HeaderLayout';
+import { useTheme } from '@/domain/usecases/hooks/themes/useTheme';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { ThemedText } from '@/presentation/atoms/ThemedText';
 
-import { useColorScheme } from '@/src/domain/usecases/hooks/useColorScheme';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+export default function Layout() {
+  const myTheme = useTheme()
   const [loaded] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -25,13 +25,38 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+    <ThemeProvider value={myTheme}>
+      <SafeAreaView style={styles.container}>
+      <GestureHandlerRootView style={{ flex: 2 }}>
+        <JsDrawer
+          screenOptions={{
+            header: (props) => <HeaderLayout {...props} />,
+            drawerPosition: 'left',
+          }}
+        >
+          <JsDrawer.Screen
+            name="index"
+            options={{
+              drawerLabel: () => <ThemedText>Home</ThemedText>,
+            }}
+          />
+          <JsDrawer.Screen
+            name="setting"
+            options={{
+              drawerLabel: () => <ThemedText>Setting</ThemedText>,
+            }}
+          />
+        </JsDrawer>
+      </GestureHandlerRootView>
+      </SafeAreaView>
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#181818',
+  },
+});

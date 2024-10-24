@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { JsDrawer } from '../presentation/templates/js-drawer';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { ThemeProvider } from '@react-navigation/native';
-import HeaderLayout from '@/presentation/organisms/HeaderLayout';
 import { useTheme } from '@/domain/usecases/hooks/themes/useTheme';
-import { SafeAreaView, StyleSheet } from 'react-native';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
+import HeaderTemplate from '@/presentation/templates/HeaderTemplates';
+import { JsDrawer } from '@/presentation/templates/JsDrawer';
 
 
 export default function Layout() {
@@ -31,7 +31,7 @@ export default function Layout() {
       <GestureHandlerRootView style={{ flex: 2 }}>
         <JsDrawer
           screenOptions={{
-            header: (props) => <HeaderLayout {...props} />,
+            header: (props) => <HeaderTemplate {...props} />,
             drawerPosition: 'left',
           }}
         >

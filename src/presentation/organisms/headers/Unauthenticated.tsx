@@ -1,18 +1,18 @@
 import { StyleSheet  } from 'react-native';
-import { ThemedView } from '../atoms/ThemedView';
-import { ThemedText } from '../atoms/ThemedText';
-import { ThemedIcon } from '../atoms/ThemedIcon';
+import { ThemedView } from '@/presentation/atoms/ThemedView';
+import { ThemedText } from '@/presentation/atoms/ThemedText';
+import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 
-interface HeaderLayoutProps {
-    navigation: any
+interface UnauthenticatedHeaderProps {
+    navigation: any;
 }
 
-export default function HeaderLayout({ navigation }: HeaderLayoutProps): JSX.Element {
+export default function UnauthenticatedHeader({ navigation }: UnauthenticatedHeaderProps): JSX.Element {
     return (
       <ThemedView style={styles.view}>
         <ThemedIcon
           name="menu"
-          size={30}
+          size={25}
           onPress={() => navigation.openDrawer()}
           style={styles.menuIcon}
         />
@@ -25,8 +25,8 @@ export default function HeaderLayout({ navigation }: HeaderLayoutProps): JSX.Ele
         <ThemedText> WalletConnect</ThemedText>
         </>
         <ThemedIcon
-          name="qr-code-scanner"
-          size={30}
+          name="scan"
+          size={25}
           style={styles.qrIcon}
         //   onPress={() => console.log('QR scanner pressed')}
         />
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     view: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10
+        padding: 20
     },
     menuIcon: {
         marginRight: 10,

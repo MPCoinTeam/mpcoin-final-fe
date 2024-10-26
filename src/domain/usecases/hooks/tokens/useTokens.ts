@@ -6,7 +6,7 @@ export function useTokens() {
     const { nodeEnv } = useConfig()
     if (nodeEnv == NODE_ENV_DEFAULT) {
         return {
-            tokens: undefined,
+            tokens: defaltTokens,
             pagination: {
                 offset: 0,
                 limit: 10,

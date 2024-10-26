@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import TokenList from './TokenList';
-import { ThemedView } from '../atoms/ThemedView';
-import ActivityList from './ActivityList';
+import TokenList from '@/presentation/organisms/lists/TokenList';
+import { ThemedView } from '@/presentation/atoms/ThemedView';
+import ActivityList from '@/presentation/organisms/lists/ActivityList';
+import AppTabBar from '@/presentation/organisms/TabBar';
 
 const TokensRoute = () => (
   <ThemedView style={styles.tokensTab}>
@@ -35,6 +36,7 @@ export default function AppTabView() {
     <TabView
       navigationState={{ index, routes }}
       renderScene={renderScene}
+      renderTabBar={(props) =><AppTabBar onIndexChange={setIndex} {...props} />}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
     />

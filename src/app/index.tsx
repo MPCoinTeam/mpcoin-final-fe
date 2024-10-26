@@ -3,7 +3,7 @@ import { ThemedView } from '@/presentation/atoms/ThemedView';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
-import TokenList from '@/presentation/templates/TokenList';
+import TokenList from '@/presentation/organisms/lists/TokenList';
 import TabView from '@/presentation/templates/TabView';
 
 export default function Index() {

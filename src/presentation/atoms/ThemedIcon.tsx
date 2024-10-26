@@ -4,7 +4,7 @@ import { type ComponentProps } from 'react';
 
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 
-type IconType = 'AntDesign' | 'MaterialIcons' | 'Entypo' | 'EvilIcons' | 'Feather' | 'Fontisto' | 'FontAwesome' | 'FontAwesome5' | 'FontAwesome6' |
+export type IconType = 'AntDesign' | 'MaterialIcons' | 'Entypo' | 'EvilIcons' | 'Feather' | 'Fontisto' | 'FontAwesome' | 'FontAwesome5' | 'FontAwesome6' |
   'Foundation' | 'Ionicons' | 'MaterialCommunityIcons' | 'MaterialIcons' | 'Octicons' | 'SimpleLineIcons' | 'Zocial'
 
 export type ThemedIconProps = IconProps<ComponentProps<typeof Icon[IconType]>['name']> & {

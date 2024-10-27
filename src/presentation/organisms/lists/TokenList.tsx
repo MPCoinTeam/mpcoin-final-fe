@@ -13,7 +13,7 @@ export default function TokenList({}: TokenListProps): JSX.Element {
   }
   return (
     <ThemedView style={styles.view}>
-      {tokens.map((token)=><TokenItem {...token} />)}
+      {tokens.map((token, i)=><TokenItem key={i} {...token} />)}
     </ThemedView>
   );
 }

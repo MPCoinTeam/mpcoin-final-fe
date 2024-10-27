@@ -1,28 +1,32 @@
-import { Image, StyleSheet  } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity  } from 'react-native';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { ParamListBase } from '@react-navigation/native';
+import AccountModal from '@/presentation/organisms/modals/AccountModal';
 
 interface AuthenticatedHeaderProps {
-    navigation: any;
+    navigation: DrawerNavigationProp<ParamListBase>;
     profile: any;
+    onOpenModal: (children: JSX.Element) => void
 }
 
-export default function AuthenticatedHeader({ profile }: AuthenticatedHeaderProps): JSX.Element {
+export default function AuthenticatedHeader({ profile, onOpenModal }: AuthenticatedHeaderProps): JSX.Element {
     return (
       <ThemedView style={styles.view}>
-        <ThemedView style={styles.profileView}>
-        <Image
-          source={{uri: profile.avatar}}
-          style={styles.profileIcon}
-        />
-        <ThemedText>{profile.getUsername()}</ThemedText>
-        <ThemedIcon
-          name="qr-code"
-          size={15}
-          style={styles.qrProfileIcon}
-        />
-        </ThemedView>
+        <TouchableOpacity style={styles.profileView} onPress={()=>onOpenModal(<AccountModal profile={profile} />)}>
+          <Image
+            source={{uri: profile.avatar}}
+            style={styles.profileIcon}
+          />
+          <ThemedText>{profile.getUsername()}</ThemedText>
+          <ThemedIcon
+            name="qr-code"
+            size={15}
+            style={styles.qrProfileIcon}
+          />
+        </TouchableOpacity>
         <ThemedView style={styles.actionView}>
         <ThemedIcon
           name="send"

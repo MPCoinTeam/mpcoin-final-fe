@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
@@ -6,8 +6,9 @@ import { SplashScreen } from 'expo-router';
 import { ThemeProvider } from '@react-navigation/native';
 import { useTheme } from '@/domain/usecases/hooks/themes/useTheme';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
-import HeaderTemplate from '@/presentation/templates/HeaderTemplates';
+import AppHeader from '@/presentation/templates/Header';
 import { JsDrawer } from '@/presentation/templates/JsDrawer';
+import AppModal from '@/presentation/templates/Modal';
 
 
 export default function Layout() {
@@ -15,6 +16,12 @@ export default function Layout() {
   const [loaded] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalChildren, setModalChildren] = useState(<></>);
+  const handlerModalChildren = (children: JSX.Element) => {
+    setModalVisible(true);
+    setModalChildren(children);
+  };
 
   useEffect(() => {
     if (loaded) {
@@ -31,7 +38,7 @@ export default function Layout() {
       <GestureHandlerRootView style={{ flex: 2 }}>
         <JsDrawer
           screenOptions={{
-            header: (props) => <HeaderTemplate {...props} />,
+            header: (props) => <AppHeader onOpenModal={handlerModalChildren} {...props} />,
             drawerPosition: 'left',
           }}
         >
@@ -49,6 +56,7 @@ export default function Layout() {
           />
         </JsDrawer>
       </GestureHandlerRootView>
+      <AppModal modalVisible={modalVisible} onModalVisible={setModalVisible} children={modalChildren} />
       </SafeAreaView>
     </ThemeProvider>
   );

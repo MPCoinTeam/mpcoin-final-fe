@@ -22,6 +22,7 @@ export default function AppTabBar(props: AppTabBarProps) {
         });
         return (
           <TouchableOpacity
+            key={route.key}
             style={styles.tabItem}
             onPress={() => props.onIndexChange(index)}
           >

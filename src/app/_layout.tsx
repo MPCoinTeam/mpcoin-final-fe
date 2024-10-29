@@ -1,70 +1,90 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useFonts } from 'expo-font';
-import { SplashScreen } from 'expo-router';
-import { ThemeProvider } from '@react-navigation/native';
-import { useTheme } from '@/domain/usecases/hooks/themes/useTheme';
-import { ThemedText } from '@/presentation/atoms/ThemedText';
-import AppHeader from '@/presentation/templates/Header';
-import { JsDrawer } from '@/presentation/templates/JsDrawer';
-import AppModal from '@/presentation/templates/Modal';
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useFonts } from "expo-font";
+import { Redirect, SplashScreen, Stack } from "expo-router";
+import { ThemeProvider } from "@react-navigation/native";
+import { useTheme } from "@/domain/usecases/hooks/themes/useTheme";
+import AppModal from "@/presentation/templates/Modal";
+import { Colors } from "@/common/constants/Colors";
+import { useProfile } from "@/domain/usecases/hooks/users/useProfile";
 
-
-export default function Layout() {
-  const myTheme = useTheme()
-  const [loaded] = useFonts({
-    SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
+export default function RootLayout() {
+  const { isAuthenticated } = useProfile();
+  const myTheme = useTheme();
+  const [fontsLoaded] = useFonts({
+    SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
   });
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChildren, setModalChildren] = useState(<></>);
-  const handlerModalChildren = (children: JSX.Element) => {
-    setModalVisible(true);
-    setModalChildren(children);
-  };
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(console.warn);
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
+
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
   return (
-    <ThemeProvider value={myTheme}>
-      <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView style={{ flex: 2 }}>
-        <JsDrawer
-          screenOptions={{
-            header: (props) => <AppHeader onOpenModal={handlerModalChildren} {...props} />,
-            drawerPosition: 'left',
-          }}
-        >
-          <JsDrawer.Screen
-            name="index"
-            options={{
-              drawerLabel: () => <ThemedText>Home</ThemedText>,
-            }}
-          />
-          <JsDrawer.Screen
-            name="setting"
-            options={{
-              drawerLabel: () => <ThemedText>Setting</ThemedText>,
-            }}
-          />
-        </JsDrawer>
-      </GestureHandlerRootView>
-      <AppModal modalVisible={modalVisible} onModalVisible={setModalVisible} children={modalChildren} />
-      </SafeAreaView>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={myTheme}>
+        <SafeAreaView style={styles.container}>
+          <Stack screenOptions={{ headerShown: false }}>
+            {/* Initial route handler */}
+            <Stack.Screen
+              name="index"
+              options={{
+                animation: "none",
+              }}
+            />
+            {/* Unprotected routes (about, contact, etc) */}
+            <Stack.Screen
+              name="(public)"
+              options={{
+                animation: "none",
+              }}
+            />
+
+            {/* Auth routes (login, signup) */}
+            <Stack.Screen
+              name="(auth)"
+              options={{
+                animation: "none",
+              }}
+            />
+
+            {/* Protected app routes */}
+            <Stack.Screen
+              name="(app)"
+              options={{
+                animation: "none",
+              }}
+            />
+          </Stack>
+
+          {modalVisible && (
+            <AppModal
+              modalVisible={modalVisible}
+              onModalVisible={setModalVisible}
+              children={modalChildren}
+            />
+          )}
+        </SafeAreaView>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#181818',
+    backgroundColor: Colors.dark.background,
   },
 });

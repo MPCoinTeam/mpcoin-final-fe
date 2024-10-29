@@ -1,22 +1,13 @@
-import '../../gesture-handler';
-import { ThemedView } from '@/presentation/atoms/ThemedView';
-import { ThemedText } from '@/presentation/atoms/ThemedText';
-import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
-import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
-import TokenList from '@/presentation/organisms/lists/TokenList';
-import TabView from '@/presentation/templates/TabView';
+import { Redirect } from "expo-router";
+import { useProfile } from "@/domain/usecases/hooks/users/useProfile";
 
 export default function Index() {
-  const { isAuthenticated, profile } = useProfile();
-  if (!isAuthenticated) {
-    return (
-      <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ThemedIcon name="assignment" size={100} color="#4F8EF7" />
-        <ThemedText>Tap to scan QRCode</ThemedText>
-      </ThemedView>
-    );
+  const { isAuthenticated } = useProfile();
+
+  // Redirect based on auth status
+  if (isAuthenticated) {
+    return <Redirect href="/(app)" />;
   }
-  return (
-    <TabView />
-  );
+
+  return <Redirect href="/(auth)/login" />;
 }

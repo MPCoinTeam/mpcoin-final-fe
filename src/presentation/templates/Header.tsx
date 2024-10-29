@@ -12,7 +12,7 @@ interface AppHeaderProps {
 export default function AppHeader({ navigation, onOpenModal }: AppHeaderProps): JSX.Element {
   const { isAuthenticated, profile } = useProfile();
   if (!isAuthenticated) {
-      return <UnauthenticatedHeader navigation={navigation} />
+    return <></>;
   }
   return <AuthenticatedHeader onOpenModal={onOpenModal} navigation={navigation} profile={profile} />;
 }

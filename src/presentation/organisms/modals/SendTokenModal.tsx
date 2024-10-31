@@ -8,16 +8,13 @@ import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 
-interface AccountProps {
+interface SendTokenModalProps {
   profile: any;
 }
 
-export default function AccountModal({ profile }: AccountProps) {
+export default function SendTokenModal({ profile }: SendTokenModalProps) {
   const color = useThemeColor({}, 'icon');
   const [showFulladdress, setShowFulladdress] = useState(false)
-  const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(profile.address);
-  };
   return (
     <Pressable style={styles.modalContainer}>
       <ThemedView style={styles.nameView}>
@@ -29,7 +26,7 @@ export default function AccountModal({ profile }: AccountProps) {
       </ThemedView>
       <ThemedText numberOfLines={4} style={{...styles.addressText, color}}>
         {showFulladdress ? profile.address : profile.getUsername()}
-        <ThemedIcon size={14} name='copy' type='Feather' style={{paddingLeft: 10}} onPress={copyToClipboard} />
+        <ThemedIcon size={14} name='copy' type='Feather' style={{paddingLeft: 10}} onPress={async () => await Clipboard.setStringAsync(profile.address)} />
       </ThemedText>
       <ThemedView style={styles.qrCodeContainer}>
         <SvgQRCode

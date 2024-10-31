@@ -5,6 +5,8 @@ import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { ParamListBase } from '@react-navigation/native';
 import AccountModal from '@/presentation/organisms/modals/AccountModal';
+import SendTokenModal from '@/presentation/organisms/modals/SendTokenModal';
+import ScannnerModal from '../modals/ScannerModal';
 
 interface AuthenticatedHeaderProps {
     navigation: DrawerNavigationProp<ParamListBase>;
@@ -33,13 +35,14 @@ export default function AuthenticatedHeader({ profile, onOpenModal }: Authentica
           size={20}
           style={styles.sendIcon}
           type='FontAwesome'
+          onPress={()=>onOpenModal(<SendTokenModal profile={profile} />)}
         />
         <ThemedIcon
           name="scan"
           size={25}
           style={styles.qrIcon}
           type='Ionicons'
-        //   onPress={() => console.log('QR scanner pressed')}
+          onPress={()=>onOpenModal(<ScannnerModal />)}
         />
         </ThemedView>
       </ThemedView>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import { Redirect, SplashScreen, Stack } from "expo-router";
+import { Slot, SplashScreen, Stack } from "expo-router";
 import { ThemeProvider } from "@react-navigation/native";
 import { useTheme } from "@/domain/usecases/hooks/themes/useTheme";
 import AppModal from "@/presentation/templates/Modal";
@@ -18,56 +18,56 @@ export default function RootLayout() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChildren, setModalChildren] = useState(<></>);
 
+  // Keep the splash screen visible while we fetch resources
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync().catch(console.warn);
     }
   }, [fontsLoaded]);
 
+  // Show loading state while resources are loading
   if (!fontsLoaded) {
     return null;
   }
 
-  if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />;
-  }
-
+  // Initial layout structure
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={myTheme}>
         <SafeAreaView style={styles.container}>
-          <Stack screenOptions={{ headerShown: false }}>
-            {/* Initial route handler */}
-            <Stack.Screen
-              name="index"
-              options={{
-                animation: "none",
-              }}
-            />
-            {/* Unprotected routes (about, contact, etc) */}
-            <Stack.Screen
-              name="(public)"
-              options={{
-                animation: "none",
-              }}
-            />
-
-            {/* Auth routes (login, signup) */}
-            <Stack.Screen
-              name="(auth)"
-              options={{
-                animation: "none",
-              }}
-            />
-
-            {/* Protected app routes */}
-            <Stack.Screen
-              name="(app)"
-              options={{
-                animation: "none",
-              }}
-            />
-          </Stack>
+          {isAuthenticated ? (
+            // Protected routes
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="(app)"
+                options={{
+                  animation: "none",
+                }}
+              />
+              <Stack.Screen
+                name="(public)"
+                options={{
+                  animation: "none",
+                }}
+              />
+            </Stack>
+          ) : (
+            // Auth routes
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen
+                name="(auth)"
+                options={{
+                  animation: "none",
+                }}
+              />
+              <Stack.Screen
+                name="(public)"
+                options={{
+                  animation: "none",
+                }}
+              />
+            </Stack>
+          )}
 
           {modalVisible && (
             <AppModal

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Platform, Pressable, SafeAreaView, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import Checkbox from "expo-checkbox";
 import Button from "@/presentation/atoms/Button";
 import { ThemedView } from "@/presentation/atoms/ThemedView";

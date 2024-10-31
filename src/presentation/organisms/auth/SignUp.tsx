@@ -12,15 +12,18 @@ import {
   Pressable,
 } from "react-native";
 import Button from "@/presentation/atoms/Button";
-import ThemedInput from "../atoms/ThemedInput";
+import ThemedInput from "@/presentation/atoms/ThemedInput";
+import { Colors } from "@/common/constants/Colors";
+import { useRouter } from "expo-router";
 // import { authApi } from "@/api/endpoints";
 
 export default function SignupScreen() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
-
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
@@ -63,7 +66,7 @@ export default function SignupScreen() {
     const conditions = [
       password.length < 8 ? "Password must be at least 8 characters long" : "",
       password.length > 20 ? "Password must be at most 20 characters long" : "",
-      !password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/)
+      !/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*()-+=]{8,20}$/.test(password)
         ? "Password must contain at least one letter and one number"
         : "",
       password !== confirmPassword ? "Passwords do not match" : "",
@@ -73,15 +76,16 @@ export default function SignupScreen() {
   }
 
   const handleSignup = async () => {
+    console.log("handleSignup", email, password, confirmPassword);
     const validationErrors = verifyPassword();
     if (validationErrors.length === 0) {
-      //   const apiErrors = await performSignup(email, password);
-      //   if (errors.length === 0) {
-      //     console.log("Signup successful");
-      //     // Handle successful signup (e.g., navigate to another screen)
-      //   } else {
-      //     setErrorsWithTimeout(apiErrors);
-      //   }
+      const apiErrors = [""];
+      if (errors.length === 0) {
+        console.log("Signup successful");
+        router.push("/otp");
+      } else {
+        setErrorsWithTimeout(apiErrors);
+      }
     } else {
       setErrorsWithTimeout(validationErrors);
     }
@@ -156,7 +160,7 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#1C1C1E",
+    backgroundColor: Colors.dark.background,
   },
   container: {
     flex: 1,
@@ -183,15 +187,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#A0A0A0",
     marginBottom: 40,
-  },
-  input: {
-    backgroundColor: "#2C2C2E",
-    color: "#FFFFFF",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    marginBottom: 15,
-    width: "100%",
   },
   errorContainer: {
     backgroundColor: "#FF3B30",

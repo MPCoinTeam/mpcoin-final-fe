@@ -6,7 +6,7 @@ export function useProfile() {
   const { nodeEnv } = useConfig();
   if (nodeEnv == NODE_ENV_DEFAULT) {
     return {
-      isAuthenticated: true,
+      isAuthenticated: false,
       profile: defaltProfile,
     };
   }

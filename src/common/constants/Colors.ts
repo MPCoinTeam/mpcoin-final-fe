@@ -38,6 +38,7 @@ export const Colors = {
     info: infoColor, // Info color for informational messages
     border: "#E0E0E0", // Border color for light mode
     shadow: "rgba(0, 0, 0, 0.1)", // Shadow color for light mode
+    inputBackground: "#fff", // Added input background color for light mode
   },
   dark: {
     text: "#ECEDEE", // Primary text color for dark mode
@@ -56,5 +57,6 @@ export const Colors = {
     info: infoColor, // Info color for informational messages in dark mode
     border: "#444", // Border color for dark mode
     shadow: "rgba(0, 0, 0, 0.5)", // Shadow color for dark mode
+    inputBackground: "#2C2C2E", // Added input background color for dark mode
   },
 };

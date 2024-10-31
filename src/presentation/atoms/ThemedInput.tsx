@@ -9,7 +9,7 @@ interface ThemedInputProps extends TextInputProps {
 
 const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
   ({ placeholder, secureTextEntry, ...props }, ref) => {
-    const backgroundColor = useThemeColor({}, "background");
+    const backgroundColor = useThemeColor({}, "inputBackground");
     const textColor = useThemeColor({}, "text");
     return (
       <TextInput

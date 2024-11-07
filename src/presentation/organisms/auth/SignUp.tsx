@@ -70,7 +70,7 @@ export default function SignupScreen() {
       const apiErrors = [''];
       if (errors.length === 0) {
         console.log('Signup successful');
-        router.push('/otp');
+        router.push('/auth/otp');
       } else {
         setErrorsWithTimeout(apiErrors);
       }

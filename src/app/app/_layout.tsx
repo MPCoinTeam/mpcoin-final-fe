@@ -25,7 +25,7 @@ export default function AppLayout() {
         }}
       >
         <JsDrawer.Screen
-          name="index"
+          name="home"
           options={{
             drawerLabel: () => <ThemedText>Home</ThemedText>,
           }}

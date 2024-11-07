@@ -31,7 +31,7 @@ export default function LoginScreen() {
             </Pressable>
           </ThemedView>
         </ThemedView>
-        <Button title="Create a wallet" onPress={() => router.push('/sign-up')} disabled={!isChecked} type="primary" />
+        <Button title="Create a wallet" onPress={() => router.push('/auth/sign-up')} disabled={!isChecked} type="primary" />
         <Button title="Recover wallets" onPress={() => console.log('Recover wallets pressed')} disabled={!isChecked} type="secondary" />
         <Button title="Other options" onPress={() => console.log('Other options pressed')} disabled={!isChecked} type="outline" />
       </ThemedView>

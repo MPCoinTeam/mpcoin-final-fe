@@ -1,4 +1,3 @@
-import '../../../gesture-handler';
 import TabView from '@/presentation/templates/TabView';
 
 export default function Index() {

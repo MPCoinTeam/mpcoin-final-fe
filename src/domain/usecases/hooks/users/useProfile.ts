@@ -12,3 +12,14 @@ export function useProfile() {
   }
   return {};
 }
+
+// const { dataUpdatedAt } = useQuery({
+//   queryKey: ['myKey'],
+//   queryFn: async () => {
+//     const response = await fetch(
+//       'https://api.github.com/repos/tannerlinsley/react-query',
+//     )
+//     return response.json()
+//   },
+//   notifyOnChangeProps,
+// })

@@ -15,7 +15,6 @@ interface AuthenticatedHeaderProps {
 }
 
 export default function AuthenticatedHeader({ profile, onOpenModal, navigation }: AuthenticatedHeaderProps): JSX.Element {
-  console.log(123, navigation);
   return (
     <ThemedView style={styles.view}>
       <TouchableOpacity style={styles.profileView} onPress={() => onOpenModal(<AccountModal profile={profile} />)}>

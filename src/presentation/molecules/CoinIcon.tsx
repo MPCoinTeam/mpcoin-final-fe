@@ -1,13 +1,13 @@
-import { IconType, ThemedIcon } from "@/presentation/atoms/ThemedIcon";
-import { ThemedView } from "../atoms/ThemedView";
-import { StyleSheet } from "react-native";
-import { useMemo } from "react";
+import { ThemedView } from '../atoms/ThemedView';
+import { IconType, ThemedIcon } from '@/presentation/atoms/ThemedIcon';
+import { useMemo } from 'react';
+import { StyleSheet } from 'react-native';
 
 type CoinIconType = 'ETH' | 'USDC' | 'USDT' | string;
 
 interface CoinIconProps {
-    size: number
-    type: CoinIconType
+  size: number;
+  type: CoinIconType;
 }
 
 interface CoinIconMapItem {
@@ -16,29 +16,29 @@ interface CoinIconMapItem {
   backgroundColor: string;
 }
 
-const CoinIconMap: {[key in CoinIconType]: CoinIconMapItem} = {
+const CoinIconMap: { [key in CoinIconType]: CoinIconMapItem } = {
   ETH: {
     name: 'ethereum',
     type: 'FontAwesome5',
-    backgroundColor: '#006CFF'
+    backgroundColor: '#006CFF',
   },
   USDC: {
     name: 'usd',
     type: 'FontAwesome',
-    backgroundColor: '#2775CA'
+    backgroundColor: '#2775CA',
   },
   USDT: {
     name: 'usdt',
     type: 'FontAwesome',
-    backgroundColor: '#26A17B'
-  }
-}
+    backgroundColor: '#26A17B',
+  },
+};
 
 export default function CoinIcon({ size, type }: CoinIconProps) {
-  const coinMap = useMemo(()=>CoinIconMap[type], [type]);
+  const coinMap = useMemo(() => CoinIconMap[type], [type]);
   return (
     <ThemedView style={styles.view}>
-      <ThemedIcon style={styles.icon}  size={size} name={coinMap.name} type={coinMap.type} />
+      <ThemedIcon style={styles.icon} size={size} name={coinMap.name} type={coinMap.type} />
     </ThemedView>
   );
 }
@@ -51,9 +51,9 @@ const styles = StyleSheet.create({
     width: 30,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   icon: {
-    color: '#fff'
-  }
-})
+    color: '#fff',
+  },
+});

@@ -6,7 +6,7 @@ interface ActivityListProps {}
 export default function ActivityList({}: ActivityListProps): JSX.Element {
   const { activities } = useActivities();
   if (!activities) {
-    return <NullList title='No activities' />
+    return <NullList title="No activities" />;
   }
-  return <div/>;
+  return <div />;
 }

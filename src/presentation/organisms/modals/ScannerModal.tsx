@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
-import { CameraView, Camera } from "expo-camera";
+import { Camera, CameraView } from 'expo-camera';
+import React, { useEffect, useState } from 'react';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -9,7 +9,7 @@ export default function App() {
   useEffect(() => {
     const getCameraPermissions = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
+      setHasPermission(status === 'granted');
     };
 
     getCameraPermissions();
@@ -32,13 +32,11 @@ export default function App() {
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: ["qr", "pdf417"],
+          barcodeTypes: ['qr', 'pdf417'],
         }}
         style={StyleSheet.absoluteFillObject}
       />
-      {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )}
+      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
     </View>
   );
 }
@@ -46,7 +44,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
 });

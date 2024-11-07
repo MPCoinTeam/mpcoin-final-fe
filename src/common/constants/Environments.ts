@@ -1,1 +1,1 @@
-export const NODE_ENV_DEFAULT = 'development'
+export const NODE_ENV_DEFAULT = 'development';

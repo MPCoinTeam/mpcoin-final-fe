@@ -1,8 +1,8 @@
-import { DefaultTheme } from "@/common/constants/Themes";
-import { useTheme as useThemeReactNative } from "@react-navigation/native";
+import { DefaultTheme } from '@/common/constants/Themes';
+import { useTheme as useThemeReactNative } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
 
 export function useTheme() {
-    const colorScheme = useColorScheme();
-    return colorScheme === 'dark' ? DefaultTheme : useThemeReactNative()
+  const colorScheme = useColorScheme();
+  return colorScheme === 'dark' ? DefaultTheme : useThemeReactNative();
 }

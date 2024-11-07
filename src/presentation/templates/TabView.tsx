@@ -1,20 +1,20 @@
+import { ThemedView } from '@/presentation/atoms/ThemedView';
+import AppTabBar from '@/presentation/organisms/TabBar';
+import ActivityList from '@/presentation/organisms/lists/ActivityList';
+import TokenList from '@/presentation/organisms/lists/TokenList';
 import * as React from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
-import TokenList from '@/presentation/organisms/lists/TokenList';
-import { ThemedView } from '@/presentation/atoms/ThemedView';
-import ActivityList from '@/presentation/organisms/lists/ActivityList';
-import AppTabBar from '@/presentation/organisms/TabBar';
+import { SceneMap, TabView } from 'react-native-tab-view';
 
 const TokensRoute = () => (
   <ThemedView style={styles.tokensTab}>
-    <TokenList/>
+    <TokenList />
   </ThemedView>
 );
 
 const ActivitiesRoute = () => (
   <ThemedView style={styles.activityTab}>
-    <ActivityList/>
+    <ActivityList />
   </ThemedView>
 );
 
@@ -36,7 +36,7 @@ export default function AppTabView() {
     <TabView
       navigationState={{ index, routes }}
       renderScene={renderScene}
-      renderTabBar={(props) =><AppTabBar onIndexChange={setIndex} {...props} />}
+      renderTabBar={(props) => <AppTabBar onIndexChange={setIndex} {...props} />}
       onIndexChange={setIndex}
       initialLayout={{ width: layout.width }}
     />
@@ -47,12 +47,11 @@ const styles = StyleSheet.create({
   tokensTab: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activityTab: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
-  

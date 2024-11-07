@@ -1,62 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Colors } from '@/common/constants/Colors';
+import { useTheme } from '@/domain/usecases/hooks/themes/useTheme';
+import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
+import { JsStack, Stack } from '@/presentation/templates/JsStack';
+import { ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
-import { ThemeProvider } from '@react-navigation/native';
-import { useTheme } from '@/domain/usecases/hooks/themes/useTheme';
-import { ThemedText } from '@/presentation/atoms/ThemedText';
-import AppHeader from '@/presentation/templates/Header';
-import { JsDrawer } from '@/presentation/templates/JsDrawer';
-import AppModal from '@/presentation/templates/Modal';
+import React, { useEffect } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
+interface IndexScreenProps {
+  isAuthenticated?: boolean;
+}
 
+const IndexScreen = ({ isAuthenticated }: IndexScreenProps) => {
+  if (!isAuthenticated) return <JsStack.Screen name="(auth)"/>;
+  return <JsStack.Screen name="(app)" />;
+};
 
-export default function Layout() {
-  const myTheme = useTheme()
-  const [loaded] = useFonts({
+export default function RootLayout() {
+  const { isAuthenticated } = useProfile();
+  const myTheme = useTheme();
+  const [fontsLoaded] = useFonts({
     SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
   });
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalChildren, setModalChildren] = useState(<></>);
-  const handlerModalChildren = (children: JSX.Element) => {
-    setModalVisible(true);
-    setModalChildren(children);
-  };
-
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(console.warn);
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
+
   return (
     <ThemeProvider value={myTheme}>
       <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView style={{ flex: 2 }}>
-        <JsDrawer
-          screenOptions={{
-            header: (props) => <AppHeader onOpenModal={handlerModalChildren} {...props} />,
-            drawerPosition: 'left',
-          }}
-        >
-          <JsDrawer.Screen
-            name="index"
-            options={{
-              drawerLabel: () => <ThemedText>Home</ThemedText>,
-            }}
-          />
-          <JsDrawer.Screen
-            name="setting"
-            options={{
-              drawerLabel: () => <ThemedText>Setting</ThemedText>,
-            }}
-          />
-        </JsDrawer>
-      </GestureHandlerRootView>
-      <AppModal modalVisible={modalVisible} onModalVisible={setModalVisible} children={modalChildren} />
+        <JsStack screenOptions={{ headerShown: false }}>
+          {/* <IndexScreen isAuthenticated={isAuthenticated} /> */}
+          <JsStack.Screen name="(auth)"/>
+        </JsStack>
       </SafeAreaView>
     </ThemeProvider>
   );
@@ -65,6 +47,6 @@ export default function Layout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#181818',
+    backgroundColor: Colors.dark.background,
   },
 });

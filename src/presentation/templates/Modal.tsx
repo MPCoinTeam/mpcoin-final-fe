@@ -6,20 +6,13 @@ interface AppModalProps {
   children: JSX.Element;
 }
 
-export default function AppModal({ modalVisible, onModalVisible, children }: AppModalProps) {
+export default function AppModal({ modalVisible, onModalVisible }: AppModalProps) {
   const closeModal = () => {
     onModalVisible(false);
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      style={styles.container}
-      onRequestClose={closeModal}>
-      <Pressable style={styles.modalBackground} onPress={closeModal}>
-        {children}
-      </Pressable>
+    <Modal animationType="slide" transparent={true} visible={modalVisible} style={styles.container} onRequestClose={closeModal}>
+      <Pressable style={styles.modalBackground} onPress={closeModal} />
     </Modal>
   );
 }

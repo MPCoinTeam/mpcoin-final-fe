@@ -1,19 +1,21 @@
 import { useTokens } from '@/domain/usecases/hooks/tokens/useTokens';
-import NullList from '@/presentation/molecules/NullList';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
-import { StyleSheet } from 'react-native';
+import NullList from '@/presentation/molecules/NullList';
 import TokenItem from '@/presentation/molecules/TokenItem';
+import { StyleSheet } from 'react-native';
 
 interface TokenListProps {}
 
 export default function TokenList({}: TokenListProps): JSX.Element {
   const { tokens } = useTokens();
   if (!tokens) {
-    return <NullList title='No tokens' />
+    return <NullList title="No tokens" />;
   }
   return (
     <ThemedView style={styles.view}>
-      {tokens.map((token, i)=><TokenItem key={i} {...token} />)}
+      {tokens.map((token, i) => (
+        <TokenItem key={i} {...token} />
+      ))}
     </ThemedView>
   );
 }

@@ -1,7 +1,7 @@
-import { NODE_ENV_DEFAULT } from "@/common/constants/Environments";
+import { NODE_ENV_DEFAULT } from '@/common/constants/Environments';
 
-const useConfig = ()=>({
-    nodeEnv: process.env.NODE_ENV || NODE_ENV_DEFAULT
-})
+const useConfig = () => ({
+  nodeEnv: process.env.NODE_ENV || NODE_ENV_DEFAULT,
+});
 
 export default useConfig;

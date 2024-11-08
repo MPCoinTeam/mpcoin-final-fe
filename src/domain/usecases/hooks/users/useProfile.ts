@@ -1,25 +1,20 @@
-import { NODE_ENV_DEFAULT } from '@/common/constants/Environments';
-import { defaltProfile } from '@/common/constants/Users';
-import useConfig from '@/domain/usecases/hooks/configs/useConfig';
+import { useAuth } from '@/context/authContext';
+import axiosInstance from '@/domain/https/https';
+import UserInfo from '@/domain/interfaces/user';
+import { useQuery } from '@tanstack/react-query';
+
+const fetcProfile = async () => {
+    const { data } = await axiosInstance.get('/userinfo');
+    return { isAuthenticated: true, profile: new UserInfo(data) };
+};
 
 export function useProfile() {
-  const { nodeEnv } = useConfig();
-  if (nodeEnv == NODE_ENV_DEFAULT) {
-    return {
-      isAuthenticated: true,
-      profile: defaltProfile,
-    };
-  }
-  return {};
+  const { token } = useAuth()
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ['useProfile'],
+    queryFn: fetcProfile,
+    retry: false
+  });
+  console.log(2212, isLoading, isError, data, error)
+  return { isLoading, isError, data, error };
 }
-
-// const { dataUpdatedAt } = useQuery({
-//   queryKey: ['myKey'],
-//   queryFn: async () => {
-//     const response = await fetch(
-//       'https://api.github.com/repos/tannerlinsley/react-query',
-//     )
-//     return response.json()
-//   },
-//   notifyOnChangeProps,
-// })

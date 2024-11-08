@@ -3,7 +3,8 @@ import { ThemedText } from '@/presentation/atoms/ThemedText';
 import AppHeader from '@/presentation/templates/Header';
 import { JsDrawer } from '@/presentation/templates/JsDrawer';
 import AppModal from '@/presentation/templates/Modal';
-import React, { useState } from 'react';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -14,18 +15,24 @@ export default function AppLayout() {
     setModalVisible(true);
     setModalChildren(children);
   };
-  const { isAuthenticated, profile } = useProfile();
-  if (!isAuthenticated) return <></>;
+  const { isLoading, data } = useProfile();
+  
+  useEffect(()=> {
+    if(!data?.isAuthenticated) {
+      router.navigate('/auth/login')
+    }
+  }, [data?.isAuthenticated])
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <JsDrawer
         screenOptions={{
-          header: (props) => <AppHeader onOpenModal={handlerModalChildren} {...props} profile={profile} />,
+          header: (props) => <AppHeader onOpenModal={handlerModalChildren} {...props} profile={data?.profile} />,
           drawerPosition: 'left',
         }}
       >
         <JsDrawer.Screen
-          name="home"
+          name="index"
           options={{
             drawerLabel: () => <ThemedText>Home</ThemedText>,
           }}

@@ -1,4 +1,5 @@
 import { Colors } from '@/common/constants/Colors';
+import { useSignUp } from '@/domain/usecases/hooks/users/useSignUp';
 import Button from '@/presentation/atoms/Button';
 import ThemedInput from '@/presentation/atoms/ThemedInput';
 import { useRouter } from 'expo-router';
@@ -17,6 +18,8 @@ export default function SignupScreen() {
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
+
+  const { mutate: signUp, isPending } = useSignUp();
 
   const setErrorsWithTimeout = (newErrors: string[]) => {
     setErrors(newErrors);
@@ -52,31 +55,32 @@ export default function SignupScreen() {
   //     }
   //   }
 
-  function verifyPassword(): string[] {
-    const conditions = [
-      password.length < 8 ? 'Password must be at least 8 characters long' : '',
-      password.length > 20 ? 'Password must be at most 20 characters long' : '',
-      !/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*()-+=]{8,20}$/.test(password) ? 'Password must contain at least one letter and one number' : '',
-      password !== confirmPassword ? 'Passwords do not match' : '',
-    ];
+  // function verifyPassword(): string[] {
+  //   const conditions = [
+  //     password.length < 8 ? 'Password must be at least 8 characters long' : '',
+  //     password.length > 20 ? 'Password must be at most 20 characters long' : '',
+  //     !/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*()-+=]{8,20}$/.test(password) ? 'Password must contain at least one letter and one number' : '',
+  //     password !== confirmPassword ? 'Passwords do not match' : '',
+  //   ];
 
-    return conditions.filter(Boolean);
-  }
+  //   return conditions.filter(Boolean);
+  // }
 
-  const handleSignup = async () => {
-    console.log('handleSignup', email, password, confirmPassword);
-    const validationErrors = verifyPassword();
-    if (validationErrors.length === 0) {
-      const apiErrors = [''];
-      if (errors.length === 0) {
-        console.log('Signup successful');
-        router.push('/auth/otp');
-      } else {
-        setErrorsWithTimeout(apiErrors);
-      }
-    } else {
-      setErrorsWithTimeout(validationErrors);
-    }
+  const handleSignup = () => {
+    // console.log('handleSignup', email, password, confirmPassword);
+    signUp({ email, password })
+    // const validationErrors = verifyPassword();
+    // if (validationErrors.length === 0) {
+    //   const apiErrors = [''];
+    //   if (errors.length === 0) {
+    //     console.log('Signup successful');
+    //     router.push('/auth/otp');
+    //   } else {
+    //     setErrorsWithTimeout(apiErrors);
+    //   }
+    // } else {
+    //   setErrorsWithTimeout(validationErrors);
+    // }
   };
 
   return (
@@ -132,7 +136,7 @@ export default function SignupScreen() {
                 returnKeyType="done"
                 onSubmitEditing={handleSignup}
               />
-              <Button title="Sign Up" onPress={handleSignup} disabled={email && password && confirmPassword ? false : true} />
+              <Button title="Sign Up" onPress={handleSignup} disabled={isPending} />
             </View>
           </ScrollView>
         </Pressable>

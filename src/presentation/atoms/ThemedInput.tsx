@@ -13,7 +13,7 @@ const ThemedInput = forwardRef<TextInput, ThemedInputProps>(({ placeholder, secu
   return (
     <TextInput
       ref={ref}
-      style={{...styles.input, backgroundColor, color: textColor }}
+      style={{ ...styles.input, backgroundColor, color: textColor }}
       placeholder={placeholder}
       placeholderTextColor="#A0A0A0"
       secureTextEntry={secureTextEntry}

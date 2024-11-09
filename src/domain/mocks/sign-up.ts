@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios"
+import { AxiosRequestConfig } from 'axios';
 
 export default function signUp(config: AxiosRequestConfig) {
   return {
@@ -6,7 +6,7 @@ export default function signUp(config: AxiosRequestConfig) {
     data: {
       user: {
         id: '123',
-        email: config.data.email
+        email: config.data.email,
       },
       wallet: {
         id: '123',
@@ -15,6 +15,6 @@ export default function signUp(config: AxiosRequestConfig) {
       },
       access_token: 'abvcan',
       refetch_token: 'abvcan',
-    }
-  }
+    },
+  };
 }

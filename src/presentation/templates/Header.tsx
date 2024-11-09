@@ -5,13 +5,12 @@ import { ParamListBase } from '@react-navigation/native';
 interface AppHeaderProps {
   navigation: DrawerNavigationProp<ParamListBase>;
   onOpenModal: (children: JSX.Element) => void;
-  profile: any;
 }
 
-export default function AppHeader({ navigation, onOpenModal, profile }: AppHeaderProps): JSX.Element {
+export default function AppHeader({ navigation, onOpenModal }: AppHeaderProps): JSX.Element {
   //
   //
   //
   //
-  return <AuthenticatedHeader onOpenModal={onOpenModal} navigation={navigation} profile={profile} />;
+  return <AuthenticatedHeader onOpenModal={onOpenModal} navigation={navigation} />;
 }

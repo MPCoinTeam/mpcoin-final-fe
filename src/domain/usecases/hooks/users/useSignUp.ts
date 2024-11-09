@@ -9,14 +9,14 @@ const postSignUp = async (request: AuthSignUpRequest): Promise<AuthSignUpRespons
 };
 
 export function useSignUp() {
-  const { saveToken } = useAuth()
-  const { isPending ,isError, data, error, isSuccess, mutate } = useMutation({
+  const { login } = useAuth();
+  const { isPending, isError, data, error, isSuccess, mutate } = useMutation({
     mutationKey: ['useSignUp'],
     mutationFn: postSignUp,
-    retry: false
+    retry: false,
   });
-  if (isSuccess && saveToken) {
-    saveToken(data.access_token)
+  if (isSuccess && login) {
+    login(data.access_token);
   }
   return { isPending, isError, data, error, mutate };
 }

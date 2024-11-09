@@ -68,7 +68,7 @@ export default function SignupScreen() {
 
   const handleSignup = () => {
     // console.log('handleSignup', email, password, confirmPassword);
-    signUp({ email, password })
+    signUp({ email, password });
     // const validationErrors = verifyPassword();
     // if (validationErrors.length === 0) {
     //   const apiErrors = [''];

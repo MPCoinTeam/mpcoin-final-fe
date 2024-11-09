@@ -1,12 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useRouter } from 'expo-router';
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
-  token: string | null;
-  saveToken?: (token: string) => void;
+  isAuthenticated: boolean;
+  login?: (token: string) => Promise<void>;
+  logout?: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({ token: null });
+export const AuthContext = createContext<AuthContextType>({ isAuthenticated: false });
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
@@ -18,24 +20,32 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(null);
-
-  const saveToken = async (token: string) => {
-    setToken(token);
-    await AsyncStorage.setItem('access_token', token)
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   const loadToken = () => {
-    AsyncStorage.getItem('access_token').then(setToken)
-  }
+    AsyncStorage.getItem('access_token')
+      .then((token) => {
+        if (token) return setIsAuthenticated(true);
+        router.navigate('/auth/login')
+      });
+  };
 
-  useEffect(()=>{
-    loadToken()
-  }, [])
+  const login = async (token: string) => {
+    await AsyncStorage.setItem('access_token', token);
+    setIsAuthenticated(true);
+    router.navigate('/(tabs)/');
+  };
 
-  return (
-    <AuthContext.Provider value={{ token, saveToken }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const logout = async () => {
+    await AsyncStorage.removeItem('token');
+    setIsAuthenticated(false);
+    router.navigate('/auth/login');
+  };
+
+  useEffect(() => {
+    loadToken();
+  }, [router.navigate]);
+
+  return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
 };

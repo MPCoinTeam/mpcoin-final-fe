@@ -1,3 +1,4 @@
+import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import ScannnerModal from '../modals/ScannerModal';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
@@ -10,11 +11,13 @@ import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface AuthenticatedHeaderProps {
   navigation: DrawerNavigationProp<ParamListBase>;
-  profile: any;
   onOpenModal: (children: JSX.Element) => void;
 }
 
-export default function AuthenticatedHeader({ profile, onOpenModal, navigation }: AuthenticatedHeaderProps): JSX.Element {
+export default function AuthenticatedHeader({ onOpenModal, navigation }: AuthenticatedHeaderProps): JSX.Element {4
+  const { isLoading, data } = useProfile();
+  if ( isLoading || !data ) return <></>
+  const { profile } = data;
   return (
     <ThemedView style={styles.view}>
       <TouchableOpacity style={styles.profileView} onPress={() => onOpenModal(<AccountModal profile={profile} />)}>

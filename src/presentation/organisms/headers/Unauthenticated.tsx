@@ -9,7 +9,7 @@ interface UnauthenticatedHeaderProps {
   navigation: DrawerNavigationProp<ParamListBase>;
 }
 
-export default function UnauthenticatedHeader({ navigation }: UnauthenticatedHeaderProps): JSX.Element {
+export default function UnauthenticatedHeader({ navigation }: UnauthenticatedHeaderProps): React.JSX.Element {
   return (
     <ThemedView style={styles.view}>
       <ThemedIcon name="menu" size={25} onPress={() => navigation.openDrawer()} style={styles.menuIcon} />

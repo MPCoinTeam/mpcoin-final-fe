@@ -24,11 +24,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
 
   const loadToken = () => {
-    AsyncStorage.getItem('access_token')
-      .then((token) => {
-        if (token) return setIsAuthenticated(true);
-        router.navigate('/auth/login')
-      });
+    AsyncStorage.getItem('access_token').then((token) => {
+      if (token) return setIsAuthenticated(true);
+      router.navigate('/auth/policy');
+    });
   };
 
   const login = async (token: string) => {
@@ -38,9 +37,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('access_token');
     setIsAuthenticated(false);
-    router.navigate('/auth/login');
   };
 
   useEffect(() => {

@@ -6,7 +6,7 @@ interface NullListProps {
   title: string;
 }
 
-export default function NullList({ title }: NullListProps): JSX.Element {
+export default function NullList({ title }: NullListProps): React.JSX.Element {
   const color = useThemeColor({}, 'icon');
   return (
     <>

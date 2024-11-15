@@ -1,4 +1,3 @@
-import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import Protected from '@/presentation/atoms/Protected';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import AppHeader from '@/presentation/templates/Header';
@@ -11,9 +10,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function AppLayout() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChildren, setModalChildren] = useState(<></>);
-  const handlerModalChildren = (children: JSX.Element) => {
+  const handlerModalChildren = (callback: (args: { closeModal: () => void }) => React.JSX.Element) => {
     setModalVisible(true);
-    setModalChildren(children);
+    setModalChildren(callback({ closeModal: () => setModalVisible(false) }));
   };
 
   return (
@@ -21,7 +20,7 @@ export default function AppLayout() {
       <GestureHandlerRootView style={styles.container}>
         <JsDrawer
           screenOptions={{
-            header: (props) => <AppHeader onOpenModal={handlerModalChildren} {...props}/>,
+            header: (props: any) => <AppHeader onOpenModal={handlerModalChildren} {...props} />,
             drawerPosition: 'left',
           }}
         >

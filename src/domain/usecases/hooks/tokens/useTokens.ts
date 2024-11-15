@@ -1,18 +1,17 @@
-import { NODE_ENV_DEFAULT } from '@/common/constants/Environments';
-import { defaltTokens } from '@/common/constants/Tokens';
-import useConfig from '@/domain/usecases/hooks/configs/useConfig';
+import axiosInstance from '@/domain/https/https';
+import { useQuery } from '@tanstack/react-query';
+
+const fetchTokens = async () => {
+  const { data: { payload } } = await axiosInstance.get('/balances');
+  return { balances: payload };
+};
 
 export function useTokens() {
-  const { nodeEnv } = useConfig();
-  if (nodeEnv == NODE_ENV_DEFAULT) {
-    return {
-      tokens: defaltTokens,
-      pagination: {
-        offset: 0,
-        limit: 10,
-        total: 1,
-      },
-    };
-  }
-  return {};
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ['useTokens'],
+    queryFn: fetchTokens,
+    retry: false,
+  });
+  console.log(2212, isLoading, isError, data, error);
+  return { isLoading, isError, data, error };
 }

@@ -9,6 +9,7 @@ import SvgQRCode from 'react-native-qrcode-svg';
 
 interface SendTokenModalProps {
   profile: any;
+  closeModal: () => void;
 }
 
 export default function SendTokenModal({ profile }: SendTokenModalProps) {

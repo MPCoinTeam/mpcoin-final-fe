@@ -1,57 +1,157 @@
 import { Colors } from '@/common/constants/Colors';
+import { useLogin } from '@/domain/usecases/hooks/users/useLogin';
 import Button from '@/presentation/atoms/Button';
-import { ThemedText } from '@/presentation/atoms/ThemedText';
-import { ThemedView } from '@/presentation/atoms/ThemedView';
-import Checkbox from 'expo-checkbox';
+import ThemedInput from '@/presentation/atoms/ThemedInput';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+
+// import { authApi } from "@/api/endpoints";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [isChecked, setIsChecked] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState<string[]>([]);
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
+
+  const { mutate: login, isPending } = useLogin();
+
+  const setErrorsWithTimeout = (newErrors: string[]) => {
+    setErrors(newErrors);
+    setTimeout(() => {
+      setErrors([]);
+    }, 5000); // Clear errors after 5 seconds
+  };
+
+  //   async function performLogin(
+  //     email: string,
+  //     password: string
+  //   ): Promise<string[]> {
+  //     try {
+  //       const response = await authApi.Login({
+  //         email,
+  //         password,
+  //       });
+  //       console.log("response", response);
+  //       return []; // Return an empty array if Login is successful
+  //     } catch (error) {
+  //       if (error instanceof AxiosError && error.response) {
+  //         // Handle known API errors
+  //         if (error.response.status === 400) {
+  //           return [error.response.data.message || "Bad request"];
+  //         } else if (error.response.status === 409) {
+  //           return ["Email already exists"];
+  //         } else if (error.response.status === 500) {
+  //           return ["Internal server error"];
+  //         }
+  //       }
+  //       // Handle any other errors
+  //       return ["An unexpected error occurred"];
+  //     }
+  //   }
+
+  // function verifyPassword(): string[] {
+  //   const conditions = [
+  //     password.length < 8 ? 'Password must be at least 8 characters long' : '',
+  //     password.length > 20 ? 'Password must be at most 20 characters long' : '',
+  //     !/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*()-+=]{8,20}$/.test(password) ? 'Password must contain at least one letter and one number' : '',
+  //     password !== confirmPassword ? 'Passwords do not match' : '',
+  //   ];
+
+  //   return conditions.filter(Boolean);
+  // }
+
+  const handleLogin = () => {
+    // console.log('handleLogin', email, password, confirmPassword);
+    login({ email, password });
+    // const validationErrors = verifyPassword();
+    // if (validationErrors.length === 0) {
+    //   const apiErrors = [''];
+    //   if (errors.length === 0) {
+    //     console.log('Login successful');
+    //     router.push('/auth/otp');
+    //   } else {
+    //     setErrorsWithTimeout(apiErrors);
+    //   }
+    // } else {
+    //   setErrorsWithTimeout(validationErrors);
+    // }
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.topContent}>
-        <ThemedText type="title" style={styles.title}>
-          MPCoin
-        </ThemedText>
-        <ThemedText type="subtitle" style={styles.subtitle}>
-          A multi-party wallet for Web3
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.bottomContent}>
-        <ThemedView style={styles.middleContent}>
-          <ThemedView style={styles.checkboxContainer}>
-            <Checkbox value={isChecked} onValueChange={setIsChecked} style={styles.checkbox} color={isChecked ? '#4F6EF7' : undefined} />
-            <Pressable onPress={() => setIsChecked(!isChecked)}>
-              <ThemedText style={styles.checkboxText}>
-                I have read and agree to the <ThemedText style={styles.link}>Terms of Use.</ThemedText>
-              </ThemedText>
-            </Pressable>
-          </ThemedView>
-        </ThemedView>
-        <Button title="Create a wallet" onPress={() => router.push('/auth/sign-up')} disabled={!isChecked} type="primary" />
-        <Button title="Recover wallets" onPress={() => console.log('Recover wallets pressed')} disabled={!isChecked} type="secondary" />
-        <Button title="Other options" onPress={() => console.log('Other options pressed')} disabled={!isChecked} type="outline" />
-      </ThemedView>
-    </ThemedView>
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 60}
+        style={styles.container}
+      >
+        <Pressable onPress={Keyboard.dismiss} style={styles.pressable}>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.topContent}>
+              <Text style={styles.title}>Login</Text>
+              <Text style={styles.subtitle}>Create your first wallet</Text>
+            </View>
+
+            <View style={styles.bottomContent}>
+              {errors.length > 0 && (
+                <View style={styles.errorContainer}>
+                  {errors.map((error, index) => (
+                    <Text key={index} style={styles.errorText}>
+                      {error}
+                    </Text>
+                  ))}
+                </View>
+              )}
+
+              <ThemedInput
+                ref={emailRef}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
+              />
+              <ThemedInput
+                ref={passwordRef}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                returnKeyType="next"
+                onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+              />
+              <Button title="Login" onPress={handleLogin} disabled={isPending} />
+            </View>
+          </ScrollView>
+        </Pressable>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: Colors.dark.background,
+  },
+  container: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 30,
+    padding: 20,
   },
   topContent: {
     alignItems: 'center',
-  },
-  middleContent: {
-    alignItems: 'center',
+    marginTop: 60,
   },
   bottomContent: {
     width: '100%',
@@ -60,29 +160,24 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: '#4F6EF7',
     marginBottom: 10,
-    marginTop: 30,
     fontWeight: 'bold',
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.dark.text,
-    marginBottom: 40,
-    fontWeight: 'normal',
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  checkbox: {
-    marginRight: 10,
-  },
-  checkboxText: {
     color: '#A0A0A0',
-    flexWrap: 'wrap',
+    marginBottom: 40,
   },
-  link: {
-    color: '#4F6EF7',
-    textDecorationLine: 'underline',
+  errorContainer: {
+    backgroundColor: '#FF3B30',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  errorText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  pressable: {
+    flex: 1,
   },
 });

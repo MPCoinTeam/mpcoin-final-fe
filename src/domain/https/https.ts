@@ -1,4 +1,5 @@
 import { NODE_ENV_DEFAULT } from '@/common/constants/Environments';
+import balances from '@/domain/mocks/balances';
 import login from '@/domain/mocks/login';
 import profile from '@/domain/mocks/profile';
 import signUp from '@/domain/mocks/sign-up';
@@ -18,9 +19,10 @@ axiosInstance.interceptors.request.use(async (req) => {
 });
 if (nodeEnv == NODE_ENV_DEFAULT) {
   const mock = new MockAdapter(axiosInstance);
-  mock.onGet('/userinfo').reply(profile);
+  mock.onGet('/users/profile').reply(profile);
   mock.onPost('/auth/login').reply(200, login);
   mock.onPost('/auth/signup').reply(signUp);
+  mock.onGet('/balances').reply(200, balances);
 }
 
 export default axiosInstance;

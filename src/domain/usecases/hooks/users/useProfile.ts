@@ -3,8 +3,8 @@ import UserInfo from '@/domain/interfaces/user';
 import { useQuery } from '@tanstack/react-query';
 
 const fetcProfile = async () => {
-  const { data } = await axiosInstance.get('/userinfo');
-  return { isAuthenticated: true, profile: new UserInfo(data) };
+  const { data: { payload } } = await axiosInstance.get('/users/profile');
+  return { isAuthenticated: true, profile: new UserInfo(payload) };
 };
 
 export function useProfile() {
@@ -13,6 +13,5 @@ export function useProfile() {
     queryFn: fetcProfile,
     retry: false,
   });
-  console.log(2212, isLoading, isError, data, error);
   return { isLoading, isError, data, error };
 }

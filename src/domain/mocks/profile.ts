@@ -5,10 +5,12 @@ export default function profile(config: AxiosRequestConfig) {
   return {
     status: 200,
     data: {
-      avatar: 'https://th.bing.com/th/id/OIP.WDpVibS9KhiPPMgQN2I1KAHaHa?rs=1&pid=ImgDetMain',
-      address: '0xb238A3b3cC27239eb78DC5bF01a8ab6538b04B83',
-      name: 'Account 1',
-      network: 'Sepolia',
+      payload: {
+        avatar: 'https://th.bing.com/th/id/OIP.WDpVibS9KhiPPMgQN2I1KAHaHa?rs=1&pid=ImgDetMain',
+        address: '0xb238A3b3cC27239eb78DC5bF01a8ab6538b04B83',
+        name: 'Account 1',
+        network: 'Sepolia',
+      }
     },
   };
 }

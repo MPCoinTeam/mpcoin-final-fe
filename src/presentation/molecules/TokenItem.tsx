@@ -5,27 +5,25 @@ import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { StyleSheet } from 'react-native';
 
 interface TokenItemProps {
-  type: string;
-  price: number;
+  token_symbol: string;
+  decimals: number;
   balance: number;
-  totalValue: number;
-  inflationRate: number;
 }
 
-export default function TokenItem({ type, price, balance, totalValue, inflationRate }: TokenItemProps): JSX.Element {
+export default function TokenItem({ token_symbol, balance, decimals }: TokenItemProps): React.JSX.Element {
   const color = useThemeColor({}, 'icon') as string;
   return (
     <ThemedView style={styles.view}>
-      <CoinIcon size={20} type={type} />
+      <CoinIcon size={20} type={token_symbol} />
       <ThemedView style={styles.priceView}>
-        <ThemedText style={styles.titleText}>{type}</ThemedText>
-        <ThemedText style={{ ...styles.contentText, color }}>
+        <ThemedText style={styles.titleText}>{token_symbol}</ThemedText>
+        {/* <ThemedText style={{ ...styles.contentText, color }}>
           ${price.toFixed(2)}({inflationRate.toFixed(2)}%)
-        </ThemedText>
+        </ThemedText> */}
       </ThemedView>
       <ThemedView style={styles.balanceView}>
-        <ThemedText style={styles.titleText}>{balance}</ThemedText>
-        <ThemedText style={{ ...styles.contentText, color }}>${totalValue}</ThemedText>
+        <ThemedText style={styles.titleText}>{balance*Math.pow(10, -decimals)}</ThemedText>
+        {/* <ThemedText style={{ ...styles.contentText, color }}>${totalValue}</ThemedText> */}
       </ThemedView>
     </ThemedView>
   );

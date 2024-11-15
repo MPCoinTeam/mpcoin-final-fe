@@ -4,8 +4,8 @@ import { AuthSignUpRequest, AuthSignUpResponse } from '@/domain/interfaces/auth'
 import { useMutation } from '@tanstack/react-query';
 
 const postSignUp = async (request: AuthSignUpRequest): Promise<AuthSignUpResponse> => {
-  const { data } = await axiosInstance.post('/auth/signup', request);
-  return data;
+  const { data: { payload } } = await axiosInstance.post('/auth/signup', request);
+  return payload;
 };
 
 export function useSignUp() {

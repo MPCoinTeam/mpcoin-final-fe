@@ -6,15 +6,15 @@ import { StyleSheet } from 'react-native';
 
 interface TokenListProps {}
 
-export default function TokenList({}: TokenListProps): JSX.Element {
-  const { tokens } = useTokens();
-  if (!tokens) {
+export default function TokenList({}: TokenListProps): React.JSX.Element {
+  const { data } = useTokens();
+  if (!data?.balances) {
     return <NullList title="No tokens" />;
   }
   return (
     <ThemedView style={styles.view}>
-      {tokens.map((token, i) => (
-        <TokenItem key={i} {...token} />
+      {data.balances.map((balance: any, i: number) => (
+        <TokenItem key={i} {...balance} />
       ))}
     </ThemedView>
   );

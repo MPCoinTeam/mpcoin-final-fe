@@ -4,10 +4,10 @@ import { ParamListBase } from '@react-navigation/native';
 
 interface AppHeaderProps {
   navigation: DrawerNavigationProp<ParamListBase>;
-  onOpenModal: (children: JSX.Element) => void;
+  onOpenModal: (callback: (args: { closeModal: () => void }) => React.JSX.Element) => void;
 }
 
-export default function AppHeader({ navigation, onOpenModal }: AppHeaderProps): JSX.Element {
+export default function AppHeader({ navigation, onOpenModal }: AppHeaderProps): React.JSX.Element {
   //
   //
   //

@@ -1,5 +1,6 @@
-import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import ScannnerModal from '../modals/ScannerModal';
+import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
+import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
@@ -11,16 +12,19 @@ import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface AuthenticatedHeaderProps {
   navigation: DrawerNavigationProp<ParamListBase>;
-  onOpenModal: (children: JSX.Element) => void;
+  onOpenModal: (callback: (args: { closeModal: () => void }) => React.JSX.Element) => void;
 }
 
-export default function AuthenticatedHeader({ onOpenModal, navigation }: AuthenticatedHeaderProps): JSX.Element {4
+export default function AuthenticatedHeader({ onOpenModal, navigation }: AuthenticatedHeaderProps) {
   const { isLoading, data } = useProfile();
-  if ( isLoading || !data ) return <></>
+  if (isLoading || !data) return <ThemedLoading />;
   const { profile } = data;
   return (
     <ThemedView style={styles.view}>
-      <TouchableOpacity style={styles.profileView} onPress={() => onOpenModal(<AccountModal profile={profile} />)}>
+      <TouchableOpacity
+        style={styles.profileView}
+        onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={profile} />)}
+      >
         <Image source={{ uri: profile.avatar }} style={styles.profileIcon} />
         <ThemedText>{profile.getUsername()}</ThemedText>
         <ThemedIcon name="qr-code" size={15} style={styles.qrProfileIcon} />
@@ -31,9 +35,9 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
           size={20}
           style={styles.sendIcon}
           type="FontAwesome"
-          onPress={() => onOpenModal(<SendTokenModal profile={profile} />)}
+          onPress={() => onOpenModal(({ closeModal }) => <SendTokenModal closeModal={closeModal} profile={profile} />)}
         />
-        <ThemedIcon name="scan" size={25} style={styles.qrIcon} type="Ionicons" onPress={() => onOpenModal(<ScannnerModal />)} />
+        <ThemedIcon name="scan" size={25} style={styles.qrIcon} type="Ionicons" onPress={() => onOpenModal(() => <ScannnerModal />)} />
       </ThemedView>
     </ThemedView>
   );

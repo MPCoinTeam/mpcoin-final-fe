@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/authContext';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
@@ -9,11 +10,17 @@ import SvgQRCode from 'react-native-qrcode-svg';
 
 interface AccountProps {
   profile: any;
+  closeModal: () => void;
 }
 
-export default function AccountModal({ profile }: AccountProps) {
+export default function AccountModal({ profile, closeModal }: AccountProps) {
   const color = useThemeColor({}, 'icon');
   const [showFulladdress, setShowFulladdress] = useState(false);
+  const { logout } = useAuth();
+  const handlerLogout = async () => {
+    logout && (await logout());
+    await closeModal();
+  };
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(profile.address);
   };
@@ -22,6 +29,7 @@ export default function AccountModal({ profile }: AccountProps) {
       <ThemedView style={styles.nameView}>
         <Image source={{ uri: profile.avatar }} style={styles.profileIcon} />
         <ThemedText style={{ ...styles.accountText, color }}>{profile.getFullname()}</ThemedText>
+        <ThemedIcon name="logout" type="AntDesign" size={20} style={styles.accountLogoutButton} onPress={handlerLogout} />
       </ThemedView>
       <ThemedText numberOfLines={4} style={{ ...styles.addressText, color }}>
         {showFulladdress ? profile.address : profile.getUsername()}
@@ -74,7 +82,9 @@ const styles = StyleSheet.create({
   accountText: {
     fontWeight: 'bold',
   },
-  addressView: {},
+  accountLogoutButton: {
+    marginStart: 10,
+  },
   addressText: {
     color: 'white',
     fontSize: 14,

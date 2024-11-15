@@ -3,7 +3,7 @@ import { Modal, Pressable, StyleSheet } from 'react-native';
 interface AppModalProps {
   modalVisible: boolean;
   onModalVisible: (modalVisible: boolean) => void;
-  children: JSX.Element;
+  children: React.JSX.Element;
 }
 
 export default function AppModal({ modalVisible, onModalVisible, children }: AppModalProps) {

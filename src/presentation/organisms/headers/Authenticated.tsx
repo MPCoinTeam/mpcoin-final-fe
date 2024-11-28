@@ -17,7 +17,8 @@ interface AuthenticatedHeaderProps {
 
 export default function AuthenticatedHeader({ onOpenModal, navigation }: AuthenticatedHeaderProps) {
   const { isLoading, data } = useProfile();
-  if (isLoading || !data) return <ThemedLoading />;
+  if (isLoading) return <ThemedLoading />;
+  if (!data) return <></>;
   const { profile } = data;
   return (
     <ThemedView style={styles.view}>

@@ -29,6 +29,9 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 const responsiveBackground = `
+input {
+  outline: none;
+}
 body {
   background-color: #fff;
   color: '#fff';

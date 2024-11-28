@@ -22,7 +22,7 @@ if (nodeEnv == NODE_ENV_DEFAULT) {
   mock.onGet('/users/profile').reply(profile);
   mock.onPost('/auth/login').reply(200, login);
   mock.onPost('/auth/signup').reply(signUp);
-  mock.onGet('/balances').reply(200, balances);
+  mock.onGet('/balances/').reply(200, balances);
 }
 
 export default axiosInstance;

@@ -1,4 +1,4 @@
-import ScannnerModal from '../modals/ScannerModal';
+import ScannnerModal from '@/presentation/organisms/modals/ScannerModal';
 import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
@@ -36,7 +36,7 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
           size={20}
           style={styles.sendIcon}
           type="FontAwesome"
-          onPress={() => onOpenModal(({ closeModal }) => <SendTokenModal closeModal={closeModal} profile={profile} />)}
+          onPress={() => onOpenModal(({ closeModal }) => <SendTokenModal closeModal={closeModal} />)}
         />
         <ThemedIcon name="scan" size={25} style={styles.qrIcon} type="Ionicons" onPress={() => onOpenModal(() => <ScannnerModal />)} />
       </ThemedView>

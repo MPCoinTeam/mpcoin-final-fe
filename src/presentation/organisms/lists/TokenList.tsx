@@ -10,7 +10,7 @@ interface TokenListProps {}
 export default function TokenList({}: TokenListProps): React.JSX.Element {
   const { isLoading, data } = useTokens();
   if (isLoading) return <ThemedLoading />;
-  if (!data) return <NullList title="No tokens" />;
+  if (!data?.balances) return <NullList title="No tokens" />;
   return (
     <ThemedView style={styles.view}>
       {data.balances.map((balance: any, i: number) => (

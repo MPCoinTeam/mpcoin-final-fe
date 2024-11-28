@@ -64,18 +64,16 @@ const VerifyAddressModal = ({ color, buttonColor, colorIcon, inputBackgroundColo
         }} />
         <ThemedIcon name="content-paste" size={20} style={{...styles.qrIcon, color: buttonColor}} type="MaterialCommunityIcons" onPress={pasteToClipboard} />
       </ThemedView>
-      <ThemedView style={styles.viewContent}>
+      {/* <ThemedView style={styles.viewContent}>
         <ThemedText style={{color: colorIcon}}>Recent contacts: </ThemedText>
         {data && <ThemedView style={styles.nameView}>
           <Image source={{ uri: data.user.avatar }} style={styles.profileIcon} />
           <ThemedText style={{ ...styles.accountText, color }}>{data.user.getFullname()}</ThemedText>
         </ThemedView>}
-      </ThemedView>
-      {data &&
+      </ThemedView> */}
       <ThemedView style={styles.viewButton}>
         <Button title="Next" style={styles.button} onPress={()=> setCurrentStep(1)} />
       </ThemedView>
-      }
     </>
   )
 }

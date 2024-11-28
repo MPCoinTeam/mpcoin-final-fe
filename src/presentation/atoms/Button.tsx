@@ -1,18 +1,19 @@
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 interface ButtonProps {
   title: string;
   onPress?: () => void;
   disabled?: boolean;
   type?: 'primary' | 'secondary' | 'outline';
+  style: StyleProp<ViewStyle>;
 }
 
-const Button: React.FC<ButtonProps> = ({ title, onPress, disabled = false, type = 'primary' }) => {
+const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false, type = 'primary', style }) => {
   const backgroundColor = useThemeColor({}, `${type}Button`);
 
-  const buttonStyles = [styles.button, disabled ? styles.disabledButton : getTypeStyles(type, backgroundColor)];
+  const buttonStyles = [styles.button, disabled ? styles.disabledButton : getTypeStyles(type, backgroundColor), style];
 
   return (
     <View style={styles.container}>
@@ -57,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Button;
+export default ThemedButton;

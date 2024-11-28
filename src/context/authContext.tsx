@@ -6,6 +6,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login?: (token: string) => Promise<void>;
   logout?: () => Promise<void>;
+  profile?: any;
+  setProfile?: (profile: any) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({ isAuthenticated: false });
@@ -21,6 +23,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [profile, setProfile] = useState(null);
   const router = useRouter();
 
   const loadToken = () => {
@@ -45,5 +48,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loadToken();
   }, [router.navigate]);
 
-  return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ isAuthenticated, login, logout, profile, setProfile }}>{children}</AuthContext.Provider>;
 };

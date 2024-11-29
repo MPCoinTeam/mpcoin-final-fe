@@ -1,29 +1,33 @@
 import { ThemedView } from '../atoms/ThemedView';
-import CoinIcon from './CoinIcon';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
-import { StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 interface TokenItemProps {
-  token_symbol: string;
-  decimals: number;
-  balance: number;
+  logoURI: string;
+  symbol: string;
+  balance: string;
+  balanceInUSD?: string;
+  price?: number;
+  inflationRate?: number;
 }
 
-export default function TokenItem({ token_symbol, balance, decimals }: TokenItemProps): React.JSX.Element {
+export default function TokenItem({ logoURI, symbol, balance, price = 0, inflationRate = 0, balanceInUSD = '0' }: TokenItemProps): React.JSX.Element {
   const color = useThemeColor({}, 'icon') as string;
+  const formattedBalance = Number(balance || '0').toFixed(2);
+
   return (
     <ThemedView style={styles.view}>
-      <CoinIcon size={20} type={token_symbol} />
+      <Image source={{ uri: logoURI }} style={styles.icon} />
       <ThemedView style={styles.priceView}>
-        <ThemedText style={styles.titleText}>{token_symbol}</ThemedText>
-        {/* <ThemedText style={{ ...styles.contentText, color }}>
-          ${price.toFixed(2)}({inflationRate.toFixed(2)}%)
-        </ThemedText> */}
+        <ThemedText style={styles.titleText}>{symbol}</ThemedText>
+        <ThemedText style={{ ...styles.contentText, color }}>
+          ${price.toFixed(2)} ({inflationRate.toFixed(2)}%)
+        </ThemedText>
       </ThemedView>
       <ThemedView style={styles.balanceView}>
-        <ThemedText style={styles.titleText}>{balance*Math.pow(10, -decimals)}</ThemedText>
-        {/* <ThemedText style={{ ...styles.contentText, color }}>${totalValue}</ThemedText> */}
+        <ThemedText style={styles.titleText}>{formattedBalance}</ThemedText>
+        <ThemedText style={{ ...styles.contentText, color }}>${balanceInUSD}</ThemedText>
       </ThemedView>
     </ThemedView>
   );
@@ -35,6 +39,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
     marginHorizontal: 15,
+  },
+  icon: {
+    borderRadius: 17.5, // Half of width/height (35/2)
+    width: 35,
+    height: 35,
   },
   priceView: {
     marginLeft: 15,

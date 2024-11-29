@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function AppLayout() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChildren, setModalChildren] = useState(<></>);
+
   const handlerModalChildren = (callback: (args: { closeModal: () => void }) => React.JSX.Element) => {
     setModalVisible(true);
     setModalChildren(callback({ closeModal: () => setModalVisible(false) }));
@@ -36,6 +37,12 @@ export default function AppLayout() {
               drawerLabel: () => <ThemedText>Setting</ThemedText>,
             }}
           />
+          <JsDrawer.Screen
+            name="logout"
+            options={{
+              drawerLabel: () => <ThemedText>Logout</ThemedText>,
+            }}
+          />
         </JsDrawer>
         <AppModal modalVisible={modalVisible} onModalVisible={setModalVisible}>
           {modalChildren}
@@ -47,7 +54,7 @@ export default function AppLayout() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
+    flex: 1,
     backgroundColor: '#181818',
   },
 });

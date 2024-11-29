@@ -1,10 +1,10 @@
-import ScannnerModal from '@/presentation/organisms/modals/ScannerModal';
 import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import AccountModal from '@/presentation/organisms/modals/AccountModal';
+import ScannnerModal from '@/presentation/organisms/modals/ScannerModal';
 import SendTokenModal from '@/presentation/organisms/modals/SendTokenModal';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { ParamListBase } from '@react-navigation/native';
@@ -27,7 +27,7 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
         onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={profile} />)}
       >
         <Image source={{ uri: profile.avatar }} style={styles.profileIcon} />
-        <ThemedText>{profile.getUsername()}</ThemedText>
+        <ThemedText>{profile.getTruncatedAddress()}</ThemedText>
         <ThemedIcon name="qr-code" size={15} style={styles.qrProfileIcon} />
       </TouchableOpacity>
       <ThemedView style={styles.actionView}>
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
+    paddingBottom: 0,
   },
   profileView: {
     flexDirection: 'row',

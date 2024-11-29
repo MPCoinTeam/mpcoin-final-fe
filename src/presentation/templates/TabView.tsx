@@ -29,7 +29,7 @@ export default function AppTabView() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'tokens', title: 'Tokens' },
-    { key: 'activities', title: 'Activities' },
+    { key: 'activities', title: 'History' },
   ]);
 
   return (

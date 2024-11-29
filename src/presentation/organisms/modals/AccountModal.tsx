@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/authContext';
+// import { useAuth } from '@/context/authContext';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
@@ -16,39 +16,41 @@ interface AccountProps {
 export default function AccountModal({ profile, closeModal }: AccountProps) {
   const color = useThemeColor({}, 'icon');
   const [showFulladdress, setShowFulladdress] = useState(false);
-  const { logout } = useAuth();
-  const handlerLogout = async () => {
-    logout && (await logout());
-    await closeModal();
-  };
+  // const { logout } = useAuth();
+  // const handlerLogout = async () => {
+  //   logout && (await logout());
+  //   await closeModal();
+  // };
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(profile.address);
+    await Clipboard.setStringAsync(profile.wallet_address);
   };
   return (
     <Pressable style={styles.modalContainer}>
       <ThemedView style={styles.nameView}>
         <Image source={{ uri: profile.avatar }} style={styles.profileIcon} />
         <ThemedText style={{ ...styles.accountText, color }}>{profile.getFullname()}</ThemedText>
-        <ThemedIcon name="logout" type="AntDesign" size={20} style={styles.accountLogoutButton} onPress={handlerLogout} />
+        {/* <ThemedIcon name="logout" type="AntDesign" size={20} style={styles.accountLogoutButton} onPress={handlerLogout} /> */}
       </ThemedView>
       <ThemedText numberOfLines={4} style={{ ...styles.addressText, color }}>
-        {showFulladdress ? profile.address : profile.getUsername()}
-        <ThemedIcon size={14} name="copy" type="Feather" style={{ paddingLeft: 10 }} onPress={copyToClipboard} />
+        {showFulladdress ? profile.wallet_address + '  ' : profile.getTruncatedAddress() + '  '}
+        <ThemedIcon size={14} name="copy" type="Feather" onPress={copyToClipboard} />
       </ThemedText>
       <ThemedView style={styles.qrCodeContainer}>
         <SvgQRCode
-          value={profile.address}
-          size={150}
+          value={profile.wallet_address}
+          size={200}
           color="#6186FE"
           backgroundColor="transparent"
-          logoSize={40}
+          logoSize={50}
           logo={require('@assets/images/logo-coin.png')}
           logoBorderRadius={50}
         />
       </ThemedView>
       <ThemedView style={{ ...styles.networkView }}>
-        <ThemedText style={{ ...styles.networkText, color }}>{profile.network}</ThemedText>
-        <ThemedIcon size={20} name="external-link" type="EvilIcons" style={{ bottom: -2 }} />
+        <ThemedText style={{ ...styles.networkText, color }} onPress={() => console.log('navigate to etherscan')}>
+          {profile.network || 'Sepolia'}
+        </ThemedText>
+        <ThemedIcon size={20} name="external-link" type="EvilIcons" />
         <ThemedText style={{ ...styles.networkText, color, bottom: 1 }}>|</ThemedText>
         <ThemedText style={{ ...styles.networkText, color, left: 3 }} onPress={() => setShowFulladdress(true)}>
           Show full address
@@ -92,11 +94,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    backgroundColor: '#1B1B1F',
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 8,
     maxWidth: '80%',
+    textAlign: 'center',
   },
   qrCodeContainer: {
     backgroundColor: '#1e1e1e',

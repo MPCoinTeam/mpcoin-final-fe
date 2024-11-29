@@ -20,9 +20,9 @@ export default class UserInfo implements User {
     this.name = user.name;
     this.user_id = user.user_id;
     this.email = user.email;
-    this.wallet_id = user.wallet_id
+    this.wallet_id = user.wallet_id;
   }
-  getUsername(): string {
+  getTruncatedAddress(): string {
     return `${this.wallet_address.slice(0, 6)}...${this.wallet_address.slice(38)}`;
   }
   getFullname(): string {

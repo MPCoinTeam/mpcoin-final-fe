@@ -30,7 +30,12 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider value={myTheme}>
           <SafeAreaView style={styles.container}>
-            <JsStack screenOptions={{ headerShown: false }}></JsStack>
+            <JsStack
+              screenOptions={{
+                headerShown: false,
+                gestureEnabled: false, // Disable swipe gesture
+              }}
+            ></JsStack>
           </SafeAreaView>
         </ThemeProvider>
       </QueryClientProvider>

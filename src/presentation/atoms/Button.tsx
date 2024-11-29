@@ -7,7 +7,7 @@ interface ButtonProps {
   onPress?: () => void;
   disabled?: boolean;
   type?: 'primary' | 'secondary' | 'outline';
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
 }
 
 const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false, type = 'primary', style }) => {

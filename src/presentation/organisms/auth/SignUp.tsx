@@ -136,7 +136,7 @@ export default function SignupScreen() {
                 returnKeyType="done"
                 onSubmitEditing={handleSignup}
               />
-              <Button title="Sign Up" onPress={handleSignup} disabled={isPending} />
+              <Button title="Sign Up" onPress={handleSignup} disabled={isPending} style={null} />
             </View>
           </ScrollView>
         </Pressable>

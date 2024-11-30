@@ -17,8 +17,11 @@ export const truncateText = (text: string, type: 'hash' | 'normal' = 'normal') =
 };
 
 export const formatAmount = (value: string): string => {
-  const [amount, unit] = value.split(' ');
-  return `${amount.slice(0, 5)} ${unit}`;
+  if (value.includes(' ')) {
+    const [amount, unit] = value.split(' ');
+    return `${amount.slice(0, 10)} ${unit}`;
+  }
+  return value.slice(0, 10);
 };
 
 export const getDisplayValue = (value: string, type?: string): string => {

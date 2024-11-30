@@ -1,6 +1,6 @@
+import TransactionList from '../organisms/lists/TransactionList';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import AppTabBar from '@/presentation/organisms/TabBar';
-import ActivityList from '@/presentation/organisms/lists/ActivityList';
 import TokenList from '@/presentation/organisms/lists/TokenList';
 import * as React from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
@@ -12,15 +12,15 @@ const TokensRoute = () => (
   </ThemedView>
 );
 
-const ActivitiesRoute = () => (
-  <ThemedView style={styles.activityTab}>
-    <ActivityList />
+const HistoryRoute = () => (
+  <ThemedView style={styles.historyTab}>
+    <TransactionList />
   </ThemedView>
 );
 
 const renderScene = SceneMap({
   tokens: TokensRoute,
-  activities: ActivitiesRoute,
+  history: HistoryRoute,
 });
 
 export default function AppTabView() {
@@ -29,7 +29,7 @@ export default function AppTabView() {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'tokens', title: 'Tokens' },
-    { key: 'activities', title: 'History' },
+    { key: 'history', title: 'History' },
   ]);
 
   return (
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  activityTab: {
+  historyTab: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

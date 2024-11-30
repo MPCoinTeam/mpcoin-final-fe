@@ -1,5 +1,4 @@
-import { useTokenBalances } from '@/domain/usecases/hooks/blockchain/useTokenBalances';
-import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
+import { useTokenBalances } from '@/domain/usecases/hooks/tokens/useTokenBalances';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import NullList from '@/presentation/molecules/NullList';
@@ -9,18 +8,7 @@ import { StyleSheet } from 'react-native';
 interface TokenListProps {}
 
 export default function TokenList({}: TokenListProps): React.JSX.Element {
-  const { data } = useProfile();
-
-  // const { data: tokens, isLoading } = useTokenBalances(data?.profile?.wallet_address);
-  const tokens = [
-    {
-      address: '0x0',
-      logoURI: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1746037003',
-      symbol: 'BTC',
-      balance: '1',
-    },
-  ];
-  const isLoading = false;
+  const { data: tokens, isLoading } = useTokenBalances();
 
   if (isLoading) return <ThemedLoading />;
   if (!tokens?.length) return <NullList title="No tokens" />;

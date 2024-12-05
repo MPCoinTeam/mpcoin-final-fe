@@ -43,7 +43,7 @@ export const Colors = {
   dark: {
     text: '#ECEDEE', // Primary text color for dark mode
     selectedText: '#6186FF', // Color for selected text in dark mode
-    background: '#151718', // Background color for dark mode
+    background: '#181818', // Background color for dark mode
     tint: tintColorDark, // Tint color for dark mode
     icon: '#9BA1A6', // Default icon color for dark mode
     tabIconDefault: '#9BA1A6', // Default tab icon color for dark mode

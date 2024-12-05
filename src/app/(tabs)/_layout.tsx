@@ -1,3 +1,4 @@
+import { Colors } from '@/common/constants/Colors';
 import Protected from '@/presentation/atoms/Protected';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import AppHeader from '@/presentation/templates/Header';
@@ -55,6 +56,6 @@ export default function AppLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#181818',
+    backgroundColor: Colors.dark.background,
   },
 });

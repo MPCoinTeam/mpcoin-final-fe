@@ -51,7 +51,6 @@ export default function PolicyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 30,

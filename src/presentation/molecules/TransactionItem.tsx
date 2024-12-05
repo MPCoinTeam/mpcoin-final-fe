@@ -2,36 +2,42 @@ import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import { TransactionStatus, TransactionStatusColors } from '@/types/transaction';
 import { getDisplayValue } from '@/utils/formatters';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 interface TransactionItemProps {
   type: string;
   amount: string;
   token: string;
+  tokenIcon?: string; // Make tokenIcon optional
   to: string;
   date: string;
   status: TransactionStatus;
   onPress: () => void;
 }
 
-export default function TransactionItem({ type, amount, token, to, date, status, onPress }: TransactionItemProps) {
+export default function TransactionItem({ type, amount, token, tokenIcon, to, date, status, onPress }: TransactionItemProps) {
   return (
     <ThemedView style={styles.container}>
       <TouchableOpacity onPress={onPress}>
-        <View style={styles.row}>
-          <ThemedText style={styles.title}>
-            {type} {getDisplayValue(amount, 'amount')} {token}
-          </ThemedText>
-          <View style={[styles.statusBadge, getStatusColor(status)]}>
-            <ThemedText style={styles.statusText}>{status}</ThemedText>
-          </View>
-        </View>
-        <View style={styles.row}>
-          <ThemedText style={styles.address} numberOfLines={1} ellipsizeMode="middle">
-            To: {getDisplayValue(to, 'address')}
-          </ThemedText>
-          <ThemedText style={styles.date}>{date}</ThemedText>
-        </View>
+        <ThemedView style={styles.content}>
+          <Image source={{ uri: tokenIcon }} style={styles.icon} defaultSource={require('@assets/images/default-token.png')} />
+          <ThemedView>
+            <View style={styles.row}>
+              <ThemedText style={styles.title}>
+                {type} {getDisplayValue(amount, 'amount')} {token}
+              </ThemedText>
+              <View style={[styles.statusBadge, getStatusColor(status)]}>
+                <ThemedText style={styles.statusText}>{status}</ThemedText>
+              </View>
+            </View>
+            <View style={styles.row}>
+              <ThemedText style={styles.address} numberOfLines={1} ellipsizeMode="middle">
+                To: {getDisplayValue(to, 'address')}
+              </ThemedText>
+              <ThemedText style={styles.date}>{date}</ThemedText>
+            </View>
+          </ThemedView>
+        </ThemedView>
       </TouchableOpacity>
     </ThemedView>
   );
@@ -43,18 +49,29 @@ const getStatusColor = (status: TransactionStatus) => ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 8,
-    paddingBottom: 4,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2A2A2A',
+    paddingTop: 6,
+    marginBottom: 2,
+    paddingHorizontal: 10,
     width: '100%',
   },
-  row: {
+
+  content: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     width: '100%',
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    marginRight: 12,
+    borderRadius: 16,
+  },
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '90%',
   },
   title: {
     fontSize: 16,

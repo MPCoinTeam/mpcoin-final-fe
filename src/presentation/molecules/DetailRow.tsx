@@ -48,11 +48,13 @@ export function DetailRow({ icon, label, value, type = 'normal' }: DetailRowProp
 
 const styles = StyleSheet.create({
   row: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   labelContainer: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,

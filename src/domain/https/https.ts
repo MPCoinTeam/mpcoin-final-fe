@@ -1,28 +1,47 @@
 import { NODE_ENV_DEFAULT } from '@/common/constants/Environments';
-import balances from '@/domain/mocks/balances';
-import login from '@/domain/mocks/login';
-import profile from '@/domain/mocks/profile';
-import signUp from '@/domain/mocks/sign-up';
+import balancesMock from '@/domain/mocks/balances';
+import loginMock from '@/domain/mocks/login';
+import profileMock from '@/domain/mocks/profile';
+import signUpMock from '@/domain/mocks/sign-up';
 import useConfig from '@/domain/usecases/hooks/configs/useConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
-const { nodeEnv, apiUrl } = useConfig();
-const axiosInstance = axios.create({
-  baseURL: apiUrl,
-});
-axiosInstance.defaults.headers.post['Content-Type'] = 'application/json';
-axiosInstance.interceptors.request.use(async (req) => {
-  req.headers['Authorization'] = `Bearer ${await AsyncStorage.getItem('access_token')}`;
-  return req;
-});
-if (nodeEnv == NODE_ENV_DEFAULT) {
-  const mock = new MockAdapter(axiosInstance);
-  mock.onGet('/users/profile').reply(profile);
-  mock.onPost('/auth/login').reply(200, login);
-  mock.onPost('/auth/signup').reply(signUp);
-  mock.onGet('/balances/').reply(200, balances);
-}
+const configureAxiosInstance = () => {
+  const { nodeEnv, apiUrl } = useConfig();
+
+  // Create Axios instance
+  const axiosInstance = axios.create({
+    baseURL: apiUrl,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  // Attach token to Authorization header
+  axiosInstance.interceptors.request.use(async (req) => {
+    const token = await AsyncStorage.getItem('access_token');
+    if (token) {
+      req.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return req;
+  });
+
+  // Enable mocks for development mode
+  // if (nodeEnv === NODE_ENV_DEFAULT) {
+  //   const mock = new MockAdapter(axiosInstance);
+
+  //   // Mock API endpoints
+  //   mock.onGet('/users/profile').reply(200, profileMock);
+  //   mock.onPost('/auth/login').reply(200, loginMock);
+  //   mock.onPost('/auth/signup').reply(200, signUpMock);
+  //   mock.onGet('/balances/').reply(200, balancesMock);
+  // }
+
+  return axiosInstance;
+};
+
+const axiosInstance = configureAxiosInstance();
 
 export default axiosInstance;

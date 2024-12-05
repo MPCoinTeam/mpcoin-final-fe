@@ -3,7 +3,7 @@ import { ThemedText } from '@/presentation/atoms/ThemedText';
 import AppHeader from '@/presentation/templates/Header';
 import { JsDrawer } from '@/presentation/templates/JsDrawer';
 import AppModal from '@/presentation/templates/Modal';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 

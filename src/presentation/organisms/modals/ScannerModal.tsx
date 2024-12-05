@@ -1,42 +1,39 @@
-import { Camera, CameraView } from 'expo-camera';
-import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function App() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+export default function ScannerModal() {
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [permission, requestPermission] = useCameraPermissions();
 
-  useEffect(() => {
-    const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    };
-
-    getCameraPermissions();
-  }, []);
-
-  const handleBarcodeScanned = ({ type, data }) => {
-    setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  };
-
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  function toggleCameraFacing() {
+    setFacing((current) => (current === 'back' ? 'front' : 'back'));
   }
 
   return (
     <View style={styles.container}>
-      <CameraView
-        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr', 'pdf417'],
-        }}
-        style={StyleSheet.absoluteFillObject}
-      />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+      <CameraView style={styles.camera} facing={facing}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+            <Text style={styles.text}>Flip Camera</Text>
+          </TouchableOpacity>
+        </View>
+      </CameraView>
     </View>
   );
 }
@@ -44,7 +41,29 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'center',
+  },
+  message: {
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    margin: 64,
+  },
+  button: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });

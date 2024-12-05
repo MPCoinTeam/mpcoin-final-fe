@@ -2,24 +2,17 @@ import { Colors } from '@/common/constants/Colors';
 import { useLogin } from '@/domain/usecases/hooks/users/useLogin';
 import Button from '@/presentation/atoms/Button';
 import ThemedInput from '@/presentation/atoms/ThemedInput';
-import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-// import { authApi } from "@/api/endpoints";
-
 export default function LoginScreen() {
-  const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
-  const confirmPasswordRef = useRef<TextInput>(null);
 
-  const { mutate: login, isPending } = useLogin();
+  const { isPending, login } = useLogin();
 
   const setErrorsWithTimeout = (newErrors: string[]) => {
     setErrors(newErrors);
@@ -28,59 +21,24 @@ export default function LoginScreen() {
     }, 5000); // Clear errors after 5 seconds
   };
 
-  //   async function performLogin(
-  //     email: string,
-  //     password: string
-  //   ): Promise<string[]> {
-  //     try {
-  //       const response = await authApi.Login({
-  //         email,
-  //         password,
-  //       });
-  //       console.log("response", response);
-  //       return []; // Return an empty array if Login is successful
-  //     } catch (error) {
-  //       if (error instanceof AxiosError && error.response) {
-  //         // Handle known API errors
-  //         if (error.response.status === 400) {
-  //           return [error.response.data.message || "Bad request"];
-  //         } else if (error.response.status === 409) {
-  //           return ["Email already exists"];
-  //         } else if (error.response.status === 500) {
-  //           return ["Internal server error"];
-  //         }
-  //       }
-  //       // Handle any other errors
-  //       return ["An unexpected error occurred"];
-  //     }
-  //   }
+  function verifyPassword(): string[] {
+    const conditions = [
+      password.length < 8 ? 'Password must be at least 8 characters long' : '',
+      password.length > 20 ? 'Password must be at most 20 characters long' : '',
+      !/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*()-+=]{8,20}$/.test(password) ? 'Password must contain at least one letter and one number' : '',
+    ];
 
-  // function verifyPassword(): string[] {
-  //   const conditions = [
-  //     password.length < 8 ? 'Password must be at least 8 characters long' : '',
-  //     password.length > 20 ? 'Password must be at most 20 characters long' : '',
-  //     !/^(?=.*[A-Za-z])(?=.*\d)[\w@#$%^&*()-+=]{8,20}$/.test(password) ? 'Password must contain at least one letter and one number' : '',
-  //     password !== confirmPassword ? 'Passwords do not match' : '',
-  //   ];
-
-  //   return conditions.filter(Boolean);
-  // }
+    return conditions.filter(Boolean);
+  }
 
   const handleLogin = () => {
-    // console.log('handleLogin', email, password, confirmPassword);
-    login({ email, password });
-    // const validationErrors = verifyPassword();
-    // if (validationErrors.length === 0) {
-    //   const apiErrors = [''];
-    //   if (errors.length === 0) {
-    //     console.log('Login successful');
-    //     router.push('/auth/otp');
-    //   } else {
-    //     setErrorsWithTimeout(apiErrors);
-    //   }
-    // } else {
-    //   setErrorsWithTimeout(validationErrors);
-    // }
+    console.log('handleLogin', email, password);
+    const validationErrors = verifyPassword();
+    if (validationErrors.length === 0) {
+      login({ email, password });
+    } else {
+      setErrorsWithTimeout(validationErrors);
+    }
   };
 
   return (
@@ -125,7 +83,7 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 secureTextEntry
                 returnKeyType="next"
-                onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+                onSubmitEditing={handleLogin}
               />
               <Button title="Login" onPress={handleLogin} disabled={isPending} />
             </View>

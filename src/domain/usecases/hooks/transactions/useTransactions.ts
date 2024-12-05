@@ -1,9 +1,12 @@
-import { chains, getPublicClient } from '@/domain/blockchain/client';
+import { useProfile } from '../users/useProfile';
+import { DEFAULT_CHAIN_ID } from '@/common/constants/Assets';
+import { useViem } from '@/context/viemContext';
+import axiosInstance from '@/domain/https/https';
 import { Transaction } from '@/domain/interfaces/transaction';
-import { useWallet } from '@/domain/usecases/hooks/wallets/useWallet';
-import { useQuery } from '@tanstack/react-query';
+import { mockTransactions } from '@/domain/mocks/transactions';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { Address, formatEther, formatUnits } from 'viem';
+import { Address } from 'viem';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -21,80 +24,77 @@ interface UseTransactionsReturn {
   fetchNextPage: () => void;
 }
 
-async function fetchTransactionReceipts(chainId: number, address: Address, txns: { hash: string; timestamp: string }[]): Promise<Transaction[]> {
-  try {
-    const client = getPublicClient(chainId);
-    const receipts = await Promise.all(
-      txns.map((tx) =>
-        client.getTransactionReceipt({
-          hash: tx.hash.startsWith('0x') ? (tx.hash as Address) : (`0x${tx.hash}` as Address),
-        }),
-      ),
-    );
-
-    return receipts.map((receipt, index) => {
-      const tx = txns[index];
-      return {
-        id: Number(receipt.transactionIndex),
-        type: receipt.from.toLowerCase() === address.toLowerCase() ? 'Sent' : 'Received',
-        amount: `${formatEther(receipt.effectiveGasPrice * receipt.gasUsed)}`,
-        token: 'ETH',
-        date: tx.timestamp.split(',')[0],
-        status: receipt.status === 'success' ? 'Confirmed' : 'Failed',
-        txHash: receipt.transactionHash,
-        from: receipt.from,
-        to: receipt.to || '',
-        gasLimit: receipt.gasUsed.toString(),
-        gasPrice: formatUnits(receipt.effectiveGasPrice, 9),
-        nonce: receipt.transactionIndex.toString(),
-        timestamp: tx.timestamp,
-        network: chains[chainId]?.name || 'Unknown',
-      };
-    });
-  } catch (error) {
-    console.error('Error fetching transaction receipts:', error);
-    return [];
-  }
+interface TransactionsResponse {
+  transactions: { hash: string; timestamp: string }[];
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
 }
 
+const fetchTransactions = async (chainId: number, page: number): Promise<TransactionsResponse> => {
+  // const {
+  //   data: { payload },
+  // } = await axiosInstance.get(`/transactions?chain_id=${chainId}&page=${page}&page_size=${ITEMS_PER_PAGE}`);
+  // return payload;
+  return {
+    transactions: mockTransactions,
+    page,
+    page_size: ITEMS_PER_PAGE,
+    total: 0,
+    total_pages: 0,
+  };
+};
+
 export function useTransactions(): UseTransactionsReturn {
-  const { wallet, transactions } = useWallet();
+  const chainId = DEFAULT_CHAIN_ID;
   const [page, setPage] = useState(1);
+  const { data: profile } = useProfile();
+  const { fetchTransactionReceipts } = useViem();
 
   const isQueryEnabled = useMemo(() => {
-    return !!wallet?.chain_id && !!wallet?.wallet_address && Array.isArray(transactions) && transactions.length > 0;
-  }, [wallet, transactions]);
+    return Boolean(profile?.wallet?.address && chainId);
+  }, [profile, chainId]);
 
-  const { data: transactionReceipts = [], isLoading } = useQuery({
-    queryKey: ['transactions', wallet?.chain_id, wallet?.wallet_address, transactions],
-    queryFn: () => fetchTransactionReceipts(wallet?.chain_id!, wallet?.wallet_address as `0x${string}`, transactions!),
+  const { data: txnResponse, isLoading: isLoadingTxns } = useQuery({
+    queryKey: ['transactions', chainId, page],
+    queryFn: () => fetchTransactions(chainId, page),
     enabled: isQueryEnabled,
+  });
+
+  const { data: transactionReceipts, isLoading: isLoadingReceipts } = useQuery({
+    queryKey: ['transactionReceipts', chainId, profile?.wallet?.address, txnResponse?.transactions],
+    queryFn: () =>
+      fetchTransactionReceipts(
+        chainId,
+        profile!.wallet.address as Address,
+        txnResponse?.transactions.map((tx) => ({ hash: tx.hash, timestamp: tx.timestamp })) ?? [],
+      ),
+    enabled: isQueryEnabled && !!txnResponse?.transactions?.length,
     staleTime: 30_000,
   });
 
   const fetchNextPage = useCallback(() => {
-    setPage((prev) => prev + 1);
-  }, []);
-
-  const paginatedTransactions = useMemo(() => {
-    const start = (page - 1) * ITEMS_PER_PAGE;
-    return transactionReceipts.slice(start, start + ITEMS_PER_PAGE);
-  }, [transactionReceipts, page]);
+    if (txnResponse && page < txnResponse.total_pages) {
+      setPage((prev) => prev + 1);
+    }
+  }, [txnResponse, page]);
 
   const pagination = useMemo(() => {
-    const total = transactionReceipts.length;
+    if (!txnResponse) return undefined;
+
     return {
       offset: (page - 1) * ITEMS_PER_PAGE,
       limit: ITEMS_PER_PAGE,
-      total,
-      hasMore: total > page * ITEMS_PER_PAGE,
+      total: txnResponse.total,
+      hasMore: page < txnResponse.total_pages,
     };
-  }, [transactionReceipts, page]);
+  }, [txnResponse, page]);
 
   return {
-    transactions: paginatedTransactions,
+    transactions: transactionReceipts,
     pagination,
-    isLoading,
+    isLoading: isLoadingTxns || isLoadingReceipts,
     fetchNextPage,
   };
 }

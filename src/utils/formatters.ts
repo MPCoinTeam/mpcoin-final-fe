@@ -5,23 +5,23 @@ const MAX_LENGTH = {
 
 export const truncateText = (text: string, type: 'hash' | 'normal' = 'normal') => {
   const maxLen = MAX_LENGTH[type];
-  if (text.length <= maxLen) return text;
+  if (text && text.length <= maxLen) return text;
 
   if (type === 'hash') {
-    const start = text.slice(0, maxLen / 2);
-    const end = text.slice(-maxLen / 2);
+    const start = text?.slice(0, maxLen / 2);
+    const end = text?.slice(-maxLen / 2);
     return `${start}...${end}`;
   }
 
-  return `${text.slice(0, maxLen)}...`;
+  return `${text?.slice(0, maxLen)}...`;
 };
 
 export const formatAmount = (value: string): string => {
-  if (value.includes(' ')) {
+  if (value && value.includes(' ')) {
     const [amount, unit] = value.split(' ');
     return `${amount.slice(0, 10)} ${unit}`;
   }
-  return value.slice(0, 10);
+  return value?.slice(0, 10) ?? '';
 };
 
 export const getDisplayValue = (value: string, type?: string): string => {

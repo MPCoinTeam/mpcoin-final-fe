@@ -1,31 +1,34 @@
-interface User {
-  user_id: string;
+import { UserWallet } from './wallet';
+
+export interface User {
+  id: string;
+  name: string;
   email: string;
   avatar: string;
-  wallet_address: string;
-  wallet_id: string;
-  name: string;
 }
 
-export default class UserInfo implements User {
-  user_id: string;
-  email: string;
-  avatar: string;
-  wallet_address: string;
-  wallet_id: string;
-  name: string;
-  constructor(user: User) {
-    this.avatar = user.avatar;
-    this.wallet_address = user.wallet_address;
-    this.name = user.name;
-    this.user_id = user.user_id;
-    this.email = user.email;
-    this.wallet_id = user.wallet_id;
+export class UserProfile {
+  user: User;
+  wallet: UserWallet;
+
+  constructor(user: User, wallet: UserWallet) {
+    this.user = user;
+    this.wallet = new UserWallet(wallet);
   }
-  getTruncatedAddress(): string {
-    return `${this.wallet_address.slice(0, 6)}...${this.wallet_address.slice(38)}`;
+
+  public getUser(): User {
+    return this.user;
   }
-  getFullname(): string {
-    return this.name;
+
+  public getWallet(): UserWallet {
+    return this.wallet;
+  }
+
+  public getFullname(): string {
+    return this.user.name;
+  }
+
+  public getAvatar(): string {
+    return 'https://th.bing.com/th/id/OIP.WDpVibS9KhiPPMgQN2I1KAHaHa?rs=1&pid=ImgDetMain';
   }
 }

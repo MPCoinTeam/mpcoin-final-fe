@@ -65,9 +65,11 @@ export default function TransactionDetailModal({
 
         {/* Transaction Details */}
         <ScrollView>
-          <ThemedView style={styles.content}>
+          <ThemedView>
             {transactionDetails.map((detail, index) => (
-              <DetailRow key={index} icon={detail.icon} label={detail.label} value={detail.value} type={detail.type as any} />
+              <ThemedView key={index} style={index % 2 === 0 ? styles.oddRow : styles.evenRow}>
+                <DetailRow icon={detail.icon} label={detail.label} value={detail.value} type={detail.type as any} />
+              </ThemedView>
             ))}
           </ThemedView>
         </ScrollView>
@@ -75,6 +77,7 @@ export default function TransactionDetailModal({
         {/* Footer Button */}
         <Button
           title="View on Explorer"
+          icon={<ThemedIcon name="compass" size={20} lightColor="#fff" darkColor="#fff" type="Ionicons" />}
           onPress={() => {
             console.log('View on Explorer');
           }}
@@ -99,8 +102,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 20,
     padding: 20,
     marginHorizontal: '1.5%',
     maxHeight: '80%', // Limit height for better usability
@@ -120,13 +122,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  content: {
-    gap: 8,
-  },
   explorerButton: {
     backgroundColor: '#4F6EF7',
     borderRadius: 12,
     paddingVertical: 12,
     marginTop: 24,
+  },
+  oddRow: {
+    backgroundColor: 'transparent',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginBottom: 2,
+  },
+  evenRow: {
+    backgroundColor: '#1A1B1E',
+    borderRadius: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginBottom: 2,
   },
 });

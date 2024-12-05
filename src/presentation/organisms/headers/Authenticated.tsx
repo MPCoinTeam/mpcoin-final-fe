@@ -19,15 +19,14 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
   const { isLoading, data } = useProfile();
   if (isLoading) return <ThemedLoading />;
   if (!data) return <></>;
-  const { profile } = data;
   return (
     <ThemedView style={styles.view}>
       <TouchableOpacity
         style={styles.profileView}
-        onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={profile} />)}
+        onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={data} />)}
       >
-        <Image source={{ uri: profile.avatar }} style={styles.profileIcon} />
-        <ThemedText>{profile.getTruncatedAddress()}</ThemedText>
+        <Image source={{ uri: data.getAvatar() }} style={styles.profileIcon} />
+        <ThemedText>{data.getWallet().getTruncatedAddress()}</ThemedText>
         <ThemedIcon name="qr-code" size={15} style={styles.qrProfileIcon} />
       </TouchableOpacity>
       <ThemedView style={styles.actionView}>
@@ -36,7 +35,7 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
           size={20}
           style={styles.sendIcon}
           type="FontAwesome"
-          onPress={() => onOpenModal(({ closeModal }) => <SendTokenModal closeModal={closeModal} />)}
+          // onPress={() => onOpenModal(({ closeModal }) => <SendTokenModal closeModal={closeModal} />)}
         />
         <ThemedIcon name="scan" size={25} style={styles.qrIcon} type="Ionicons" onPress={() => onOpenModal(() => <ScannnerModal />)} />
       </ThemedView>

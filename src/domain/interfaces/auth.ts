@@ -1,32 +1,18 @@
-export interface AuthLoginRequest {
+import { UserWallet } from './wallet';
+
+export interface AuthRequest {
   email: string;
   password: string;
 }
 
-export interface AuthLoginResponse {
-  user: {
-    id: string;
-    email: string;
-  };
+export interface AuthResponse {
+  profile: User;
+  wallet: UserWallet;
   access_token: string;
   refresh_token: string;
 }
 
-export interface AuthSignUpRequest {
-  email: string;
-  password: string;
-}
-
-export interface AuthSignUpResponse {
-  user: {
-    id: string;
-    email: string;
-  };
-  wallet: {
-    id: string;
-    user_id: string;
-    address: string;
-  };
-  access_token: string;
-  refresh_token: string;
+export interface ProfileResponse {
+  profile: User;
+  wallet: UserWallet;
 }

@@ -1,5 +1,5 @@
+import { ThemedView } from './ThemedView';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
-import React from 'react';
 import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 interface ButtonProps {
@@ -8,9 +8,10 @@ interface ButtonProps {
   disabled?: boolean;
   type?: 'primary' | 'secondary' | 'outline';
   style?: StyleProp<ViewStyle>;
+  icon?: React.ReactNode;
 }
 
-const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false, type = 'primary', style }) => {
+const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false, type = 'primary', style, icon }) => {
   const backgroundColor = useThemeColor({}, `${type}Button`);
 
   const buttonStyles = [styles.button, disabled ? styles.disabledButton : getTypeStyles(type, backgroundColor), style];
@@ -18,7 +19,10 @@ const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false,
   return (
     <View style={styles.container}>
       <Pressable style={buttonStyles} onPress={onPress} disabled={disabled}>
-        <Text style={styles.text}>{title}</Text>
+        <ThemedView style={styles.buttonContent}>
+          {icon && <View style={styles.icon}>{icon}</View>}
+          <Text style={styles.text}>{title}</Text>
+        </ThemedView>
       </Pressable>
     </View>
   );
@@ -55,6 +59,14 @@ const styles = StyleSheet.create({
   text: {
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
 });
 

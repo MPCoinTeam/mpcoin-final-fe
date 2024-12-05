@@ -16,3 +16,23 @@ export interface Token extends BaseToken {
   price: number;
   inflationRate: number;
 }
+
+export interface Chain {
+  chain_id: string;
+  explorer_url: string;
+  id: string;
+  name: string;
+  native_currency: string;
+  rpc_url: string;
+}
+
+export interface TokenResponse {
+  chain_id: string;
+  contract_address: string;
+  decimals: number;
+  id: string;
+  logo_url: string;
+  name: string;
+  symbol: string;
+  type: string;
+}

@@ -1,52 +1,82 @@
+import { UserProfile } from '@/domain/interfaces/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
+  isLoading: boolean;
   isAuthenticated: boolean;
-  login?: (token: string) => Promise<void>;
-  logout?: () => Promise<void>;
-  profile?: any;
-  setProfile?: (profile: any) => void;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
+  logout: () => Promise<void>;
+  profile: UserProfile | null;
+  setProfile: (profile: UserProfile | null) => void;
 }
 
-export const AuthContext = createContext<AuthContextType>({ isAuthenticated: false });
+export const AuthContext = createContext<AuthContextType>({
+  isLoading: false,
+  isAuthenticated: false,
+  login: async () => {},
+  logout: async () => {},
+  profile: null,
+  setProfile: () => {},
+});
 
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  return context;
-};
+export const useAuth = (): AuthContextType => useContext(AuthContext);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [profile, setProfile] = useState(null);
-  const router = useRouter();
+  const [authState, setAuthState] = useState({
+    isLoading: true,
+    isAuthenticated: false,
+    profile: null as UserProfile | null,
+    wallet: null as Wallet | null,
+  });
 
-  const loadToken = () => {
-    AsyncStorage.getItem('access_token').then((token) => {
-      if (token) return setIsAuthenticated(true);
-      router.navigate('/auth/policy');
-    });
+  const loadToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (token) {
+        setAuthState((prev) => ({ ...prev, isAuthenticated: true }));
+      } 
+    } catch (error) {
+      console.error('Failed to load token:', error);
+    }
   };
 
-  const login = async (token: string) => {
-    await AsyncStorage.setItem('access_token', token);
-    setIsAuthenticated(true);
-    router.navigate('/(tabs)/');
+  const login = async (accessToken: string, refreshToken: string) => {
+    await AsyncStorage.setItem('access_token', accessToken);
+    await AsyncStorage.setItem('refresh_token', refreshToken);
+    setAuthState((prev) => ({ ...prev, isAuthenticated: true }));
   };
 
   const logout = async () => {
     await AsyncStorage.removeItem('access_token');
-    setIsAuthenticated(false);
+    await AsyncStorage.removeItem('refresh_token');
+    setAuthState({ isAuthenticated: false, profile: null, wallet: null, isLoading: false });
+  };
+
+  const setProfile = (profile: UserProfile | null) => {
+    setAuthState((prev) => ({ ...prev, profile }));
   };
 
   useEffect(() => {
     loadToken();
-  }, [router.navigate]);
+  }, []);
 
-  return <AuthContext.Provider value={{ isAuthenticated, login, logout, profile, setProfile }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        isLoading: authState.isLoading,
+        isAuthenticated: authState.isAuthenticated,
+        login,
+        logout,
+        profile: authState.profile,
+        setProfile,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };

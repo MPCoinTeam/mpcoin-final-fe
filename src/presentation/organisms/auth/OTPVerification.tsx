@@ -1,5 +1,5 @@
 import Button from '@/presentation/atoms/Button';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const OTP_LENGTH = 6;

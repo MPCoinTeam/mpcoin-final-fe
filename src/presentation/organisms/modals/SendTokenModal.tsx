@@ -1,6 +1,5 @@
-import UserInfo from '@/domain/interfaces/user';
+import { UserProfile } from '@/domain/interfaces/user';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
-import { useGetByAddress } from '@/domain/usecases/hooks/users/useGetByAddress';
 import Button from '@/presentation/atoms/Button';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import ThemedInput from '@/presentation/atoms/ThemedInput';
@@ -11,7 +10,6 @@ import ScannnerModal from '@/presentation/organisms/modals/ScannerModal';
 import * as Clipboard from 'expo-clipboard';
 import { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput } from 'react-native';
- 
 
 interface SendTokenModalProps {
   closeModal: () => void;
@@ -29,16 +27,15 @@ interface CommitTransactionModalProps {
   color: string;
   buttonColor: string;
   colorIcon: string;
-  data?: UserInfo;
+  data?: UserProfile;
   setCurrentStep: (step: number) => void;
 }
 
 const VerifyAddressModal = ({ color, buttonColor, colorIcon, inputBackgroundColor, setCurrentStep }: VerifyAddressModalProps) => {
-
   const addressRef = useRef<TextInput>(null);
   const [address, setAddress] = useState('0x2C772942Be86CF5D11043967cbA0d0927F73AAcB');
 
-  const { data, mutate } = useGetByAddress();
+  // const { data, mutate } = useGetByAddress();
 
   const pasteToClipboard = async () => {
     await Clipboard.getStringAsync().then(setAddress);
@@ -46,8 +43,8 @@ const VerifyAddressModal = ({ color, buttonColor, colorIcon, inputBackgroundColo
 
   return (
     <>
-      <ThemedView style={{...styles.viewInput, backgroundColor: inputBackgroundColor}}>
-        <ThemedText style={{color, fontSize: 14}}>To: </ThemedText>
+      <ThemedView style={{ ...styles.viewInput, backgroundColor: inputBackgroundColor }}>
+        <ThemedText style={{ color, fontSize: 14 }}>To: </ThemedText>
         <ThemedInput
           ref={addressRef}
           placeholder="Address"
@@ -56,13 +53,25 @@ const VerifyAddressModal = ({ color, buttonColor, colorIcon, inputBackgroundColo
           returnKeyType="next"
           // clearTextOnFocus
           onSubmitEditing={() => mutate(address)}
-          style={{...styles.input, color}}
+          style={{ ...styles.input, color }}
           numberOfLines={1}
         />
-        <ThemedIcon name="scan" size={20} style={{...styles.qrIcon, color: buttonColor}} type="Ionicons" onPress={() => {
-          // onOpenModal(() => <ScannnerModal />)
-        }} />
-        <ThemedIcon name="content-paste" size={20} style={{...styles.qrIcon, color: buttonColor}} type="MaterialCommunityIcons" onPress={pasteToClipboard} />
+        <ThemedIcon
+          name="scan"
+          size={20}
+          style={{ ...styles.qrIcon, color: buttonColor }}
+          type="Ionicons"
+          onPress={() => {
+            // onOpenModal(() => <ScannnerModal />)
+          }}
+        />
+        <ThemedIcon
+          name="content-paste"
+          size={20}
+          style={{ ...styles.qrIcon, color: buttonColor }}
+          type="MaterialCommunityIcons"
+          onPress={pasteToClipboard}
+        />
       </ThemedView>
       {/* <ThemedView style={styles.viewContent}>
         <ThemedText style={{color: colorIcon}}>Recent contacts: </ThemedText>
@@ -72,29 +81,29 @@ const VerifyAddressModal = ({ color, buttonColor, colorIcon, inputBackgroundColo
         </ThemedView>}
       </ThemedView> */}
       <ThemedView style={styles.viewButton}>
-        <Button title="Next" style={styles.button} onPress={()=> setCurrentStep(1)} />
+        <Button title="Next" style={styles.button} onPress={() => setCurrentStep(1)} />
       </ThemedView>
     </>
-  )
-}
+  );
+};
 
 const CommitTransactionModal = ({ color, buttonColor, colorIcon, setCurrentStep, data }: CommitTransactionModalProps) => {
   const countRef = useRef<TextInput>(null);
   const [count, setCount] = useState('');
-  
+
   const onHandlerSend = () => {
-    setCurrentStep(2)
-  }
+    setCurrentStep(2);
+  };
 
   return (
     <>
       <ThemedView style={styles.viewBackIcon}>
-        <ThemedIcon name="arrow-back-circle-outline" size={25} style={{color: buttonColor}} type="Ionicons" onPress={()=>setCurrentStep(0)} />
+        <ThemedIcon name="arrow-back-circle-outline" size={25} style={{ color: buttonColor }} type="Ionicons" onPress={() => setCurrentStep(0)} />
       </ThemedView>
-      <ThemedView style={{backgroundColor: '!importal', flex: 1, width: "100%", gap: 10}}>
+      <ThemedView style={{ backgroundColor: '!importal', flex: 1, width: '100%', gap: 10 }}>
         <ThemedView style={styles.viewContentItem}>
           <ThemedView style={styles.gap}>
-            <ThemedText style={{color: colorIcon, fontSize: 14}}>Send</ThemedText>
+            <ThemedText style={{ color: colorIcon, fontSize: 14 }}>Send</ThemedText>
             <ThemedView style={styles.valueContent}>
               <ThemedInput
                 ref={countRef}
@@ -104,50 +113,50 @@ const CommitTransactionModal = ({ color, buttonColor, colorIcon, setCurrentStep,
                 returnKeyType="next"
                 // clearTextOnFocus
                 onSubmitEditing={() => {}}
-                style={{color, width: 30}}
-                keyboardType='numeric'
+                style={{ color, width: 30 }}
+                keyboardType="numeric"
               />
-              <CoinIcon size={12} type={"ETH"} />
-              <ThemedText style={{color, fontSize: 14}}>ETH</ThemedText>
+              <CoinIcon size={12} type={'ETH'} />
+              <ThemedText style={{ color, fontSize: 14 }}>ETH</ThemedText>
             </ThemedView>
           </ThemedView>
           <ThemedView style={styles.gap}>
-            <ThemedText style={{color: colorIcon, fontSize: 14}}>To</ThemedText>
-            <ThemedText style={{color, fontSize: 14}}>ETH</ThemedText>
+            <ThemedText style={{ color: colorIcon, fontSize: 14 }}>To</ThemedText>
+            <ThemedText style={{ color, fontSize: 14 }}>ETH</ThemedText>
           </ThemedView>
           <ThemedView style={styles.noGrap}>
-            <ThemedText style={{color: colorIcon, fontSize: 14}}>Network</ThemedText>
+            <ThemedText style={{ color: colorIcon, fontSize: 14 }}>Network</ThemedText>
             <ThemedView style={styles.valueContent}>
-              <CoinIcon size={12} type={"ETH"} />
-              <ThemedText style={{color: buttonColor, fontSize: 14}}>Sepolia</ThemedText>
+              <CoinIcon size={12} type={'ETH'} />
+              <ThemedText style={{ color: buttonColor, fontSize: 14 }}>Sepolia</ThemedText>
             </ThemedView>
           </ThemedView>
         </ThemedView>
-        <ThemedView style={{...styles.viewContentItem, ...styles.noGrap}}>
-          <ThemedText style={{color: colorIcon, fontSize: 14}}>Max Fee</ThemedText>
+        <ThemedView style={{ ...styles.viewContentItem, ...styles.noGrap }}>
+          <ThemedText style={{ color: colorIcon, fontSize: 14 }}>Max Fee</ThemedText>
           <ThemedView style={styles.valueContent}>
-            <ThemedText style={{color: colorIcon, fontSize: 14}}>(9.08 USD)</ThemedText>
-            <ThemedText style={{color, fontSize: 14}}>0.00455 ETH</ThemedText>
-            </ThemedView>
+            <ThemedText style={{ color: colorIcon, fontSize: 14 }}>(9.08 USD)</ThemedText>
+            <ThemedText style={{ color, fontSize: 14 }}>0.00455 ETH</ThemedText>
+          </ThemedView>
         </ThemedView>
       </ThemedView>
       <ThemedView style={styles.viewButton}>
         <Button title="Send" style={styles.button} onPress={onHandlerSend} />
       </ThemedView>
     </>
-  )
-}
+  );
+};
 
-const SuccessTransactionModal = ({closeModal}: { closeModal: () => void }) => {
-  useEffect(()=>{
+const SuccessTransactionModal = ({ closeModal }: { closeModal: () => void }) => {
+  useEffect(() => {
     setTimeout(closeModal, 1000);
-  }, [])
+  }, []);
   return (
-      <ThemedView style={{backgroundColor: '!importal', height: "100%", justifyContent: "center"}}>
-        <ThemedIcon name="checkmark-circle" size={100} style={{color: "#41B715"}} type="Ionicons"/>
-      </ThemedView>
-  )
-}
+    <ThemedView style={{ backgroundColor: '!importal', height: '100%', justifyContent: 'center' }}>
+      <ThemedIcon name="checkmark-circle" size={100} style={{ color: '#41B715' }} type="Ionicons" />
+    </ThemedView>
+  );
+};
 
 export default function SendTokenModal({ closeModal }: SendTokenModalProps) {
   const color = useThemeColor({}, 'text');
@@ -166,21 +175,11 @@ export default function SendTokenModal({ closeModal }: SendTokenModalProps) {
       buttonColor={buttonColor}
       setCurrentStep={setCurrentStep}
     />,
-    <CommitTransactionModal
-      color={color}
-      colorIcon={colorIcon}
-      data={data?.user}
-      buttonColor={buttonColor}
-      setCurrentStep={setCurrentStep}
-    />,
-    <SuccessTransactionModal closeModal={closeModal} />
-  ]
+    <CommitTransactionModal color={color} colorIcon={colorIcon} data={data?.user} buttonColor={buttonColor} setCurrentStep={setCurrentStep} />,
+    <SuccessTransactionModal closeModal={closeModal} />,
+  ];
 
-  return (
-    <Pressable style={styles.modalContainer}>
-      {steps[currentStep]}
-    </Pressable>
-  );
+  return <Pressable style={styles.modalContainer}>{steps[currentStep]}</Pressable>;
 }
 
 const styles = StyleSheet.create({
@@ -193,7 +192,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '50%',
     justifyContent: 'space-between',
-    gap: 10
+    gap: 10,
   },
   viewInput: {
     width: '100%',
@@ -206,7 +205,7 @@ const styles = StyleSheet.create({
     borderColor: '#2A3354',
     borderWidth: 2,
     borderRadius: 5,
-    gap: 10
+    gap: 10,
   },
   input: {
     width: '100%',
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
   viewContent: {
     backgroundColor: '!importal',
     width: '100%',
-    flex: 1
+    flex: 1,
   },
   button: {
     borderRadius: 5,
@@ -262,19 +261,19 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   noGrap: {
     backgroundColor: '!importal',
     padding: 5,
     paddingHorizontal: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   valueContent: {
     flexDirection: 'row',
     backgroundColor: '!importal',
     gap: 5,
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });

@@ -1,15 +1,24 @@
 import { Colors } from '@/common/constants/Colors';
+import { useAuth } from '@/context/authContext';
 import Button from '@/presentation/atoms/Button';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import Checkbox from 'expo-checkbox';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 
 export default function PolicyScreen() {
+  const { isAuthenticated, profile } = useAuth();
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && profile) {
+      router.push('/');
+    }
+  }, [isAuthenticated, profile]);
+
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.topContent}>
@@ -42,7 +51,7 @@ export default function PolicyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: 'transparent',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 30,

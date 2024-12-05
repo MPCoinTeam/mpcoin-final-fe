@@ -1,4 +1,4 @@
-import { useTokenBalances } from '@/domain/usecases/hooks/tokens/useTokenBalances';
+import { useBalance } from '@/domain/usecases/hooks/assets/useBalance';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import NullList from '@/presentation/molecules/NullList';
@@ -8,9 +8,9 @@ import { StyleSheet } from 'react-native';
 interface TokenListProps {}
 
 export default function TokenList({}: TokenListProps): React.JSX.Element {
-  const { data: tokens, isLoading } = useTokenBalances();
+  const { isPending, data: tokens } = useBalance();
 
-  if (isLoading) return <ThemedLoading />;
+  if (isPending) return <ThemedLoading />;
   if (!tokens?.length) return <NullList title="No tokens" />;
 
   return (

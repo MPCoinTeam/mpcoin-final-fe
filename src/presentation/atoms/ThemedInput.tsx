@@ -1,5 +1,5 @@
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { StyleSheet, TextInput, TextInputProps } from 'react-native';
 
 interface ThemedInputProps extends TextInputProps {

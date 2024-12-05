@@ -1,35 +1,43 @@
 import { useAuth } from '@/context/authContext';
 import axiosInstance from '@/domain/https/https';
-import UserInfo from '@/domain/interfaces/user';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { ProfileResponse } from '@/domain/interfaces/auth';
+import { UserProfile } from '@/domain/interfaces/user';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-const fetchProfile = async () => {
+const fetchProfile = async (): Promise<ProfileResponse> => {
   const {
     data: { payload },
-  } = await axiosInstance.get('/users/profile');
-  return { isAuthenticated: true, profile: new UserInfo(payload.user) };
+  } = await axiosInstance.get<{ payload: ProfileResponse }>('/users/me');
+  return payload;
 };
 
-export function useProfile() {
-  const { setProfile, logout } = useAuth();
-  const { isLoading, isError, data, error } = useQuery({
+export function useProfile(): {
+  isLoading: boolean;
+  isError: boolean;
+  data: UserProfile | null;
+  error: Error | null;
+} {
+  const { setProfile, logout, profile } = useAuth();
+
+  const query = useQuery<ProfileResponse, Error, ProfileResponse, string[]>({
     queryKey: ['useProfile'],
     queryFn: fetchProfile,
     retry: false,
-  });
-
-  useEffect(() => {
-    if (data?.profile && setProfile) {
-      setProfile(data.profile);
-    }
-  }, [data, setProfile]);
-
-  useEffect(() => {
-    if (isError && logout) {
+    enabled: !profile,
+    onSuccess: (data: ProfileResponse) => {
+      if (data && !profile) {
+        setProfile(new UserProfile(data.profile, data.wallet));
+      }
+    },
+    onError: () => {
       logout();
-    }
-  }, [isError, logout]);
+    },
+  } as UseQueryOptions<ProfileResponse, Error, ProfileResponse, string[]>);
 
-  return { isLoading, isError, data, error };
+  return {
+    isLoading: query.isFetching,
+    isError: query.isError,
+    data: profile,
+    error: query.error,
+  };
 }

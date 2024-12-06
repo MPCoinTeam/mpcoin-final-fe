@@ -1,4 +1,4 @@
-// import { useAuth } from '@/context/authContext';
+import { UserProfile } from '@/domain/interfaces/user';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
@@ -9,35 +9,29 @@ import { Image, Pressable, StyleSheet } from 'react-native';
 import SvgQRCode from 'react-native-qrcode-svg';
 
 interface AccountProps {
-  profile: any;
+  profile: UserProfile;
   closeModal: () => void;
 }
 
 export default function AccountModal({ profile, closeModal }: AccountProps) {
   const color = useThemeColor({}, 'icon');
   const [showFulladdress, setShowFulladdress] = useState(false);
-  // const { logout } = useAuth();
-  // const handlerLogout = async () => {
-  //   logout && (await logout());
-  //   await closeModal();
-  // };
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(profile.wallet_address);
+    await Clipboard.setStringAsync(profile.getWallet().address);
   };
   return (
     <Pressable style={styles.modalContainer}>
       <ThemedView style={styles.nameView}>
-        <Image source={{ uri: profile.avatar }} style={styles.profileIcon} />
+        <Image source={{ uri: profile.getUser().avatar }} style={styles.profileIcon} />
         <ThemedText style={{ ...styles.accountText, color }}>{profile.getFullname()}</ThemedText>
-        {/* <ThemedIcon name="logout" type="AntDesign" size={20} style={styles.accountLogoutButton} onPress={handlerLogout} /> */}
       </ThemedView>
       <ThemedText numberOfLines={4} style={{ ...styles.addressText, color }}>
-        {showFulladdress ? profile.wallet_address + '  ' : profile.getTruncatedAddress() + '  '}
+        {showFulladdress ? profile.getWallet().address + '  ' : profile.getWallet().getTruncatedAddress() + '  '}
         <ThemedIcon size={14} name="copy" type="Feather" onPress={copyToClipboard} />
       </ThemedText>
       <ThemedView style={styles.qrCodeContainer}>
         <SvgQRCode
-          value={profile.wallet_address}
+          value={profile.getWallet().address}
           size={200}
           color="#6186FE"
           backgroundColor="transparent"
@@ -48,7 +42,7 @@ export default function AccountModal({ profile, closeModal }: AccountProps) {
       </ThemedView>
       <ThemedView style={{ ...styles.networkView }}>
         <ThemedText style={{ ...styles.networkText, color }} onPress={() => console.log('navigate to etherscan')}>
-          {profile.network || 'Sepolia'}
+          {chains[0] || 'Sepolia'}
         </ThemedText>
         <ThemedIcon size={20} name="external-link" type="EvilIcons" />
         <ThemedText style={{ ...styles.networkText, color, bottom: 1 }}>|</ThemedText>

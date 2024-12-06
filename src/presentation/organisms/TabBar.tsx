@@ -32,11 +32,14 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     paddingTop: StatusBar.currentHeight,
+    borderBottomWidth: 1,
+    borderBottomColor: '#2A2A2A',
   },
   tabItem: {
-    // flex: 1,
     alignItems: 'center',
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    marginBottom: 12,
   },
   tabText: {
     fontSize: 16,

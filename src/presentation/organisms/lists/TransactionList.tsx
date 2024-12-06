@@ -1,7 +1,7 @@
 import { Transaction } from '@/domain/interfaces/transaction';
 import { useTransactions } from '@/domain/usecases/hooks/transactions/useTransactions';
 import NullList from '@/presentation/molecules/NullList';
-import TransactionItem from '@/presentation/molecules/TransactionItem';
+import TransactionItem from '@/presentation/molecules/transaction/TransactionItem';
 import TransactionDetailModal from '@/presentation/organisms/modals/TransactionDetailModal';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, ScrollView } from 'react-native';

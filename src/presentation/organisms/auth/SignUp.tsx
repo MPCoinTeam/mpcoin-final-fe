@@ -1,5 +1,5 @@
 import { Colors } from '@/common/constants/Colors';
-import { useSignup } from '@/domain/usecases/hooks/users/useSignup';
+import { useSignup } from '@/domain/usecases/hooks/users/useSignUp';
 import Button from '@/presentation/atoms/Button';
 import ThemedInput from '@/presentation/atoms/ThemedInput';
 import { useRef, useState } from 'react';

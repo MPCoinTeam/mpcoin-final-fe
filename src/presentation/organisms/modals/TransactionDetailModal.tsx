@@ -1,9 +1,10 @@
-import Button from '@/presentation/atoms/Button';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
-import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
-import { DetailRow } from '@/presentation/molecules/DetailRow';
-import { Modal, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { FooterWithButton } from '@/presentation/molecules/steps/Footer';
+import { DetailHeader } from '@/presentation/molecules/transaction/DetailHeader';
+import { DetailList } from '@/presentation/molecules/transaction/DetailList';
+import { TransactionStatus } from '@/types/transaction';
+import { Modal, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 interface TransactionDetailModalProps {
   txHash: string;
@@ -13,7 +14,7 @@ interface TransactionDetailModalProps {
   gasLimit: string;
   gasPrice: string;
   nonce: string;
-  status: 'Confirmed' | 'Pending' | 'Failed';
+  status: TransactionStatus;
   timestamp: string;
   network: string;
   closeModal: () => void;
@@ -32,56 +33,24 @@ export default function TransactionDetailModal({
   network,
   closeModal,
 }: TransactionDetailModalProps) {
-  const transactionDetails = [
-    { icon: 'globe', label: 'Network', value: network, type: 'network' },
-    { icon: 'receipt-outline', label: 'Tx Hash', value: txHash, type: 'hash' },
-    { icon: 'arrow-up-circle', label: 'From', value: from, type: 'address' },
-    { icon: 'arrow-down-circle', label: 'To', value: to, type: 'address' },
-    { icon: 'diamond', label: 'Value', value, type: 'amount' },
-    { icon: 'fast-food-outline', label: 'Gas Limit', value: gasLimit, type: 'normal' },
-    { icon: 'pricetag', label: 'Gas Price', value: gasPrice, type: 'normal' },
-    { icon: 'calculator', label: 'Nonce', value: nonce, type: 'normal' },
-    { icon: 'checkmark-circle', label: 'Status', value: status, type: 'status' },
-    { icon: 'time', label: 'Timestamp', value: timestamp, type: 'normal' },
-  ];
-
   return (
     <Modal transparent animationType="slide" onRequestClose={closeModal}>
       {/* Background Overlay */}
       <TouchableWithoutFeedback onPress={closeModal}>
         <View style={styles.overlay} />
       </TouchableWithoutFeedback>
-
-      {/* Bottom Sheet Modal Content */}
       <ThemedView style={styles.container}>
-        {/* Header */}
-        <ThemedView style={styles.header}>
-          <ThemedIcon name="receipt-outline" size={40} color="#4F6EF7" type="Ionicons" />
-          <ThemedView>
-            <ThemedText style={styles.title}>{status === 'Confirmed' ? 'Confirmed Transaction' : 'Transaction Details'}</ThemedText>
-            <ThemedText style={styles.subtitle}>Transaction Review</ThemedText>
-          </ThemedView>
-        </ThemedView>
+        <DetailHeader status={status} />
 
-        {/* Transaction Details */}
-        <ScrollView>
-          <ThemedView>
-            {transactionDetails.map((detail, index) => (
-              <ThemedView key={index} style={index % 2 === 0 ? styles.oddRow : styles.evenRow}>
-                <DetailRow icon={detail.icon} label={detail.label} value={detail.value} type={detail.type as any} />
-              </ThemedView>
-            ))}
-          </ThemedView>
-        </ScrollView>
+        <DetailList {...{ txHash, from, to, value, gasLimit, gasPrice, nonce, status, timestamp, network }} />
 
-        {/* Footer Button */}
-        <Button
+        <FooterWithButton
           title="View on Explorer"
           icon={<ThemedIcon name="compass" size={20} lightColor="#fff" darkColor="#fff" type="Ionicons" />}
+          style={styles.footer}
           onPress={() => {
             console.log('View on Explorer');
           }}
-          style={styles.explorerButton}
         />
       </ThemedView>
     </Modal>
@@ -91,7 +60,7 @@ export default function TransactionDetailModal({
 const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     top: 0,
     bottom: 0,
     left: 0,
@@ -105,41 +74,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     marginHorizontal: '1.5%',
-    maxHeight: '80%', // Limit height for better usability
+    maxHeight: '80%',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-    gap: 12,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#4F6EF7',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-  },
-  explorerButton: {
-    backgroundColor: '#4F6EF7',
-    borderRadius: 12,
-    paddingVertical: 12,
-    marginTop: 24,
-  },
-  oddRow: {
-    backgroundColor: 'transparent',
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    marginBottom: 2,
-  },
-  evenRow: {
-    backgroundColor: '#1A1B1E',
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    marginBottom: 2,
+  footer: {
+    marginTop: 10,
   },
 });

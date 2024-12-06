@@ -1,37 +1,41 @@
-import { UserProfile } from '@/domain/interfaces/user';
+import { DEFAULT_AVATAR, DEFAULT_NAME } from '@/common/constants/Environments';
+import { useViem } from '@/context/viemContext';
+import { Profile } from '@/domain/interfaces/profile';
 import { useThemeColor } from '@/domain/usecases/hooks/themes/useThemeColor';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
+import { truncateText } from '@/utils/formatters';
 import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet } from 'react-native';
 import SvgQRCode from 'react-native-qrcode-svg';
 
 interface AccountProps {
-  profile: UserProfile;
+  profile: Profile;
   closeModal: () => void;
 }
 
 export default function AccountModal({ profile, closeModal }: AccountProps) {
   const color = useThemeColor({}, 'icon');
+  const { currentChain } = useViem();
   const [showFulladdress, setShowFulladdress] = useState(false);
   const copyToClipboard = async () => {
-    await Clipboard.setStringAsync(profile.getWallet().address);
+    await Clipboard.setStringAsync(profile.wallet.address);
   };
   return (
     <Pressable style={styles.modalContainer}>
       <ThemedView style={styles.nameView}>
-        <Image source={{ uri: profile.getUser().avatar }} style={styles.profileIcon} />
-        <ThemedText style={{ ...styles.accountText, color }}>{profile.getFullname()}</ThemedText>
+        <Image source={{ uri: profile.user.avatar ?? DEFAULT_AVATAR }} style={styles.profileIcon} />
+        <ThemedText style={{ ...styles.accountText, color }}>{profile.user.name ?? DEFAULT_NAME}</ThemedText>
       </ThemedView>
       <ThemedText numberOfLines={4} style={{ ...styles.addressText, color }}>
-        {showFulladdress ? profile.getWallet().address + '  ' : profile.getWallet().getTruncatedAddress() + '  '}
+        {showFulladdress ? profile.wallet.address + '  ' : truncateText(profile.wallet.address, 'hash') + '  '}
         <ThemedIcon size={14} name="copy" type="Feather" onPress={copyToClipboard} />
       </ThemedText>
       <ThemedView style={styles.qrCodeContainer}>
         <SvgQRCode
-          value={profile.getWallet().address}
+          value={profile.wallet.address}
           size={200}
           color="#6186FE"
           backgroundColor="transparent"
@@ -42,7 +46,7 @@ export default function AccountModal({ profile, closeModal }: AccountProps) {
       </ThemedView>
       <ThemedView style={{ ...styles.networkView }}>
         <ThemedText style={{ ...styles.networkText, color }} onPress={() => console.log('navigate to etherscan')}>
-          {chains[0] || 'Sepolia'}
+          {currentChain?.name || 'Sepolia'}
         </ThemedText>
         <ThemedIcon size={20} name="external-link" type="EvilIcons" />
         <ThemedText style={{ ...styles.networkText, color, bottom: 1 }}>|</ThemedText>

@@ -1,4 +1,4 @@
-import { BaseToken, Chain } from '@/domain/interfaces/assets';
+import { Chain, Token } from '@/domain/interfaces/assets';
 import { useAssets } from '@/domain/usecases/hooks/assets/useAssets';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -6,7 +6,7 @@ import { ActivityIndicator, View } from 'react-native';
 
 interface AssetsContextType {
   chains: Chain[];
-  tokens: BaseToken[];
+  tokens: Token[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
@@ -21,7 +21,7 @@ const AssetsContext = createContext<AssetsContextType | null>(null);
 
 export function AssetsProvider({ children }: { children: React.ReactNode }) {
   const [chains, setChains] = useState<Chain[]>([]);
-  const [tokens, setTokens] = useState<BaseToken[]>([]);
+  const [tokens, setTokens] = useState<Token[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const { chains: fetchedChains, tokens: fetchedTokens, isLoading, isError, error } = useAssets();

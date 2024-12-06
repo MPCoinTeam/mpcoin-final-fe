@@ -1,14 +1,8 @@
-import { TOKENS } from '@/common/constants/Assets';
 import { REFRESH_INTERVAL } from '@/common/constants/Environments';
 import { useAssetsContext } from '@/context/assetsContext';
 import { binanceApi } from '@/domain/https/binance';
-import { TokenPrice } from '@/types/token';
+import { PriceData, Token, TokenRate } from '@/domain/interfaces/assets';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
-
-interface PriceData {
-  currentPrice: number;
-  yesterdayPrice: number;
-}
 
 async function fetchPriceData(symbol: string): Promise<PriceData> {
   const [currentData, klineData] = await Promise.all([binanceApi.getCurrentPrice(symbol), binanceApi.getKlines(symbol)]);
@@ -19,7 +13,7 @@ async function fetchPriceData(symbol: string): Promise<PriceData> {
   };
 }
 
-function calculateTokenPrice(data: PriceData): TokenPrice {
+function calculateTokenPrice(data: PriceData): TokenRate {
   if (!data.currentPrice || !data.yesterdayPrice) {
     return { currentPrice: 0, inflationRate: 0 };
   }
@@ -32,7 +26,7 @@ function calculateTokenPrice(data: PriceData): TokenPrice {
   };
 }
 
-async function fetchTokenPrices(tokens: typeof TOKENS): Promise<Record<string, TokenPrice>> {
+async function fetchTokenPrices(tokens: Token[]): Promise<Record<string, TokenRate>> {
   const results = await Promise.allSettled(
     tokens.map(async (token) => {
       try {
@@ -50,7 +44,7 @@ async function fetchTokenPrices(tokens: typeof TOKENS): Promise<Record<string, T
       acc[token.symbol] = results[index].status === 'fulfilled' ? results[index].value : { currentPrice: 0, inflationRate: 0 };
       return acc;
     },
-    {} as Record<string, TokenPrice>,
+    {} as Record<string, TokenRate>,
   );
 }
 
@@ -64,5 +58,5 @@ export function useTokenPrices() {
     refetchInterval: REFRESH_INTERVAL,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-  } as UseQueryOptions<Record<string, TokenPrice>, Error>);
+  } as UseQueryOptions<Record<string, TokenRate>, Error>);
 }

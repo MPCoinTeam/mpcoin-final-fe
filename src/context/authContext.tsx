@@ -1,22 +1,22 @@
-import { UserProfile } from '@/domain/interfaces/user';
+import { Profile } from '@/domain/interfaces/profile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
+  profile: Profile | null;
   login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
-  profile: UserProfile | null;
-  setProfile: (profile: UserProfile | null) => void;
+  setProfile: (profile: Profile | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   isLoading: false,
   isAuthenticated: false,
+  profile: null,
   login: async () => {},
   logout: async () => {},
-  profile: null,
   setProfile: () => {},
 });
 
@@ -30,16 +30,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [authState, setAuthState] = useState({
     isLoading: true,
     isAuthenticated: false,
-    profile: null as UserProfile | null,
-    wallet: null as Wallet | null,
+    profile: null as Profile | null,
   });
 
   const loadToken = async () => {
     try {
-      const token = await AsyncStorage.getItem('access_token');
-      if (token) {
+      const accessToken = await AsyncStorage.getItem('access_token');
+      if (accessToken) {
         setAuthState((prev) => ({ ...prev, isAuthenticated: true }));
-      } 
+      }
     } catch (error) {
       console.error('Failed to load token:', error);
     }
@@ -54,10 +53,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     await AsyncStorage.removeItem('access_token');
     await AsyncStorage.removeItem('refresh_token');
-    setAuthState({ isAuthenticated: false, profile: null, wallet: null, isLoading: false });
+    setAuthState({ isAuthenticated: false, profile: null, isLoading: false });
   };
 
-  const setProfile = (profile: UserProfile | null) => {
+  const setProfile = (profile: Profile | null) => {
     setAuthState((prev) => ({ ...prev, profile }));
   };
 
@@ -70,9 +69,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       value={{
         isLoading: authState.isLoading,
         isAuthenticated: authState.isAuthenticated,
+        profile: authState.profile,
         login,
         logout,
-        profile: authState.profile,
         setProfile,
       }}
     >

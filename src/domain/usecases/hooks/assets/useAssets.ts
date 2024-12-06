@@ -1,7 +1,6 @@
 import axiosInstance from '@/domain/https/https';
-import { BaseToken, Chain, TokenResponse } from '@/domain/interfaces/assets';
+import { Chain, Token } from '@/domain/interfaces/assets';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
 
 async function fetchChains(): Promise<Chain[]> {
   const {
@@ -10,17 +9,11 @@ async function fetchChains(): Promise<Chain[]> {
   return payload;
 }
 
-async function fetchChainsTokens(chainId: string): Promise<BaseToken[]> {
+async function fetchChainsTokens(chainId: string): Promise<Token[]> {
   const {
     data: { payload },
-  } = await axiosInstance.get<{ payload: TokenResponse[] }>(`/assets/chains/${chainId}/tokens`);
-  return payload.map((token: TokenResponse) => ({
-    address: token.contract_address as Address,
-    symbol: token.symbol,
-    name: token.name,
-    decimals: token.decimals,
-    logoURI: token.logo_url,
-  }));
+  } = await axiosInstance.get<{ payload: Token[] }>(`/assets/chains/${chainId}/tokens`);
+  return payload;
 }
 
 const ONE_DAY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
@@ -35,11 +28,12 @@ export function useAssets() {
     refetchOnWindowFocus: false,
   });
 
+  const chainId = chainsQuery.data?.[0]?.chainId;
   // Second query to fetch tokens - cached for 1 day
   const tokensQuery = useQuery({
-    queryKey: ['tokens', chainsQuery.data?.[0]?.chain_id],
-    queryFn: () => fetchChainsTokens(chainsQuery.data![0].chain_id),
-    enabled: !!chainsQuery.data?.[0]?.chain_id,
+    queryKey: ['tokens', chainId],
+    queryFn: () => fetchChainsTokens(chainId!),
+    enabled: !!chainId,
     staleTime: ONE_DAY,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

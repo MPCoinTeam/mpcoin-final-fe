@@ -1,10 +1,9 @@
 import { useProfile } from '../users/useProfile';
-import { DEFAULT_CHAIN_ID } from '@/common/constants/Assets';
 import { useViem } from '@/context/viemContext';
 import axiosInstance from '@/domain/https/https';
 import { Transaction } from '@/domain/interfaces/transaction';
 import { mockTransactions } from '@/domain/mocks/transactions';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { Address } from 'viem';
 
@@ -47,26 +46,25 @@ const fetchTransactions = async (chainId: number, page: number): Promise<Transac
 };
 
 export function useTransactions(): UseTransactionsReturn {
-  const chainId = DEFAULT_CHAIN_ID;
   const [page, setPage] = useState(1);
   const { data: profile } = useProfile();
-  const { fetchTransactionReceipts } = useViem();
+  const { fetchTransactionReceipts, currentChain } = useViem();
 
   const isQueryEnabled = useMemo(() => {
-    return Boolean(profile?.wallet?.address && chainId);
-  }, [profile, chainId]);
+    return Boolean(profile?.wallet?.address && currentChain.id);
+  }, [profile, currentChain]);
 
   const { data: txnResponse, isLoading: isLoadingTxns } = useQuery({
-    queryKey: ['transactions', chainId, page],
-    queryFn: () => fetchTransactions(chainId, page),
+    queryKey: ['transactions', currentChain.id, page],
+    queryFn: () => fetchTransactions(currentChain.id, page),
     enabled: isQueryEnabled,
   });
 
   const { data: transactionReceipts, isLoading: isLoadingReceipts } = useQuery({
-    queryKey: ['transactionReceipts', chainId, profile?.wallet?.address, txnResponse?.transactions],
+    queryKey: ['transactionReceipts', currentChain.id, profile?.wallet?.address, txnResponse?.transactions],
     queryFn: () =>
       fetchTransactionReceipts(
-        chainId,
+        currentChain.id,
         profile!.wallet.address as Address,
         txnResponse?.transactions.map((tx) => ({ hash: tx.hash, timestamp: tx.timestamp })) ?? [],
       ),

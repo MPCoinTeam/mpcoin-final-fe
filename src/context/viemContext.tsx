@@ -1,113 +1,104 @@
-import { CHAINS, TOKENS } from '@/common/constants/Assets';
-import { BaseToken } from '@/domain/interfaces/assets';
+import { CHAINS } from '@/common/constants/Assets';
+import { Token } from '@/domain/interfaces/assets';
 import { Transaction } from '@/domain/interfaces/transaction';
+import { TransactionStatus } from '@/types/transaction';
 import { createContext, useContext, useMemo } from 'react';
-import { Address, PublicClient, createPublicClient, erc20Abi, formatEther, formatUnits, http } from 'viem';
-import { sepolia } from 'viem/chains';
+import { Address, Chain, PublicClient, createPublicClient, erc20Abi, formatEther, formatUnits, http } from 'viem';
 
 interface ViemContextType {
   publicClient: PublicClient;
+  currentChain: Chain;
   fetchTransactionReceipts: (chainId: number, address: Address, txns: { hash: string; timestamp: string }[]) => Promise<Transaction[]>;
-  fetchTokenBalance: (chainId: number, walletAddress: Address, token: BaseToken) => Promise<{ token: BaseToken; balance: string }>;
+  fetchTokenBalance: (chainId: number, walletAddress: Address, token: Token) => Promise<{ token: Token; balance: string }>;
 }
 
-// Default public client for Sepolia
-const defaultPublicClient = createPublicClient({
-  chain: sepolia,
+// Default configuration
+const DEFAULT_CHAIN = CHAINS[0];
+const DEFAULT_PUBLIC_CLIENT = createPublicClient({
+  chain: DEFAULT_CHAIN,
   transport: http('https://endpoints.omniatech.io/v1/eth/sepolia/public'),
 });
 
 const viemContext = createContext<ViemContextType>({
-  publicClient: defaultPublicClient,
+  publicClient: DEFAULT_PUBLIC_CLIENT,
+  currentChain: DEFAULT_CHAIN,
   fetchTransactionReceipts: async () => [],
-  fetchTokenBalance: async () => ({ token: TOKENS[0], balance: '0' }),
+  fetchTokenBalance: async () => ({ token: {} as Token, balance: '0' }),
 });
 
 export const useViem = () => useContext(viemContext);
 
 export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize the public client
-  const publicClient = useMemo(
-    () =>
-      createPublicClient({
-        chain: CHAINS[0],
-        transport: http(),
-      }),
-    [],
-  );
+  const publicClient = useMemo(() => createPublicClient({ chain: DEFAULT_CHAIN, transport: http() }), []);
 
-  // Fetch token balance
-  const fetchTokenBalance = async (chainId: number, walletAddress: Address, token: BaseToken): Promise<{ token: BaseToken; balance: string }> => {
+  const handleError = (error: any, message: string) => {
+    console.warn(`[${message}] Error:`, error);
+    return null;
+  };
+
+  const fetchTokenBalance = async (chainId: number, walletAddress: Address, token: Token): Promise<{ token: Token; balance: string }> => {
     try {
-      console.log('token address: ', token.address);
-      console.log('wallet address: ', walletAddress);
-      const rawBalance =
-        token.symbol === 'ETH'
-          ? await publicClient.getBalance({ address: walletAddress })
-          : await publicClient.readContract({
-              address: token.address as Address,
-              abi: erc20Abi,
-              functionName: 'balanceOf',
-              args: [walletAddress],
-            });
+      const isNativeToken = token.symbol === 'ETH';
+      const rawBalance = isNativeToken
+        ? await publicClient.getBalance({ address: walletAddress })
+        : await publicClient.readContract({
+            address: token.contractAddress as Address,
+            abi: erc20Abi,
+            functionName: 'balanceOf',
+            args: [walletAddress],
+          });
 
-      const formattedBalance = formatUnits(rawBalance as bigint, token.decimals);
-      return { token, balance: formattedBalance };
+      return {
+        token,
+        balance: formatUnits(rawBalance as bigint, token.decimals),
+      };
     } catch (error) {
-      console.warn(`[fetchTokenBalance] Error for ${token.symbol}:`, error);
-      return { token, balance: '0' };
+      return handleError(error, `fetchTokenBalance for ${token.symbol}`) || { token, balance: '0' };
     }
   };
 
-  // Fetch transaction receipts
   const fetchTransactionReceipts = async (chainId: number, address: Address, txns: { hash: string; timestamp: string }[]): Promise<Transaction[]> => {
+    if (!txns?.length) return [];
+
     try {
-      // Early return if txns is undefined or empty
-      if (!txns || txns.length === 0) {
-        return [];
-      }
       const receipts = await Promise.all(
         txns.map((tx) =>
           publicClient.getTransactionReceipt({
-            hash: tx.hash.startsWith('0x') ? (tx.hash as Address) : (`0x${tx.hash}` as Address),
+            hash: tx.hash.startsWith('0x') ? (tx.hash as Address) : `0x${tx.hash}`,
           }),
         ),
       );
 
-      return receipts.map((receipt, index) => {
-        const tx = txns[index];
-        return {
-          id: Number(receipt.transactionIndex),
-          type: receipt.from.toLowerCase() === address.toLowerCase() ? 'Sent' : 'Received',
-          amount: formatEther(receipt.effectiveGasPrice * receipt.gasUsed),
-          token: 'ETH',
-          date: tx.timestamp.split(',')[0],
-          status: receipt.status === 'success' ? 'Confirmed' : 'Failed',
-          txHash: receipt.transactionHash,
-          from: receipt.from,
-          to: receipt.to || '',
-          gasLimit: receipt.gasUsed.toString(),
-          gasPrice: formatUnits(receipt.effectiveGasPrice, 9),
-          nonce: receipt.transactionIndex.toString(),
-          timestamp: tx.timestamp,
-          network: CHAINS[0].name,
-        };
-      });
+      return receipts.map((receipt, index) => ({
+        id: Number(receipt.transactionIndex),
+        type: receipt.from.toLowerCase() === address.toLowerCase() ? 'Sent' : 'Received',
+        amount: formatEther(receipt.effectiveGasPrice * receipt.gasUsed),
+        token: 'ETH',
+        date: txns[index].timestamp.split(',')[0],
+        status: receipt.status === 'success' ? 'Confirmed' : ('Failed' as TransactionStatus),
+        txHash: receipt.transactionHash,
+        from: receipt.from as Address,
+        to: receipt.to as Address,
+        gasLimit: receipt.gasUsed.toString(),
+        gasPrice: formatUnits(receipt.effectiveGasPrice, 9),
+        nonce: receipt.transactionIndex.toString(),
+        timestamp: txns[index].timestamp,
+        network: DEFAULT_CHAIN.name,
+      }));
     } catch (error) {
-      console.error('[fetchTransactionReceipts] Error:', error);
-      return [];
+      return handleError(error, 'fetchTransactionReceipts') || [];
     }
   };
 
-  // Memoized context value
-  const value = useMemo(
+  const contextValue = useMemo(
     () => ({
       publicClient,
+      currentChain: DEFAULT_CHAIN,
       fetchTransactionReceipts,
       fetchTokenBalance,
     }),
     [publicClient],
   );
 
-  return <viemContext.Provider value={value}>{children}</viemContext.Provider>;
+  return <viemContext.Provider value={contextValue}>{children}</viemContext.Provider>;
 };

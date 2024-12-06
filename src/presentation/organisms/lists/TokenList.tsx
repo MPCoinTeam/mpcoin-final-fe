@@ -16,7 +16,7 @@ export default function TokenList({}: TokenListProps): React.JSX.Element {
   return (
     <ThemedView style={styles.view}>
       {tokens.map((token, i) => (
-        <TokenItem key={token.address || i} {...token} logoURI={token.logoURI || ''} />
+        <TokenItem key={token.contractAddress || i} {...token} logoURI={token.logoUrl || ''} />
       ))}
     </ThemedView>
   );

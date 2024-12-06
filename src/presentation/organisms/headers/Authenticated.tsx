@@ -1,3 +1,4 @@
+import { DEFAULT_AVATAR } from '@/common/constants/Environments';
 import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
@@ -6,6 +7,7 @@ import { ThemedView } from '@/presentation/atoms/ThemedView';
 import AccountModal from '@/presentation/organisms/modals/AccountModal';
 import ScannnerModal from '@/presentation/organisms/modals/ScannerModal';
 import SendTokenModal from '@/presentation/organisms/modals/SendTokenModal';
+import { truncateText } from '@/utils/formatters';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { ParamListBase } from '@react-navigation/native';
 import { Image, StyleSheet, TouchableOpacity } from 'react-native';
@@ -25,8 +27,8 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
         style={styles.profileView}
         onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={data} />)}
       >
-        <Image source={{ uri: data.getAvatar() }} style={styles.profileIcon} />
-        <ThemedText>{data.getWallet().getTruncatedAddress()}</ThemedText>
+        <Image source={{ uri: data.user.avatar ?? DEFAULT_AVATAR }} style={styles.profileIcon} />
+        <ThemedText>{truncateText(data.wallet.address, 'hash')}</ThemedText>
         <ThemedIcon name="qr-code" size={15} style={styles.qrProfileIcon} />
       </TouchableOpacity>
       <ThemedView style={styles.actionView}>
@@ -48,6 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 20,
+    paddingLeft: 0,
     paddingBottom: 0,
   },
   profileView: {

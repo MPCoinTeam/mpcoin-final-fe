@@ -1,38 +1,37 @@
 import { useAuth } from '@/context/authContext';
 import axiosInstance from '@/domain/https/https';
-import { ProfileResponse } from '@/domain/interfaces/auth';
-import { UserProfile } from '@/domain/interfaces/user';
+import { Profile } from '@/domain/interfaces/profile';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
-const fetchProfile = async (): Promise<ProfileResponse> => {
+const fetchProfile = async (): Promise<Profile> => {
   const {
     data: { payload },
-  } = await axiosInstance.get<{ payload: ProfileResponse }>('/users/me');
+  } = await axiosInstance.get('/users/me');
   return payload;
 };
 
 export function useProfile(): {
   isLoading: boolean;
   isError: boolean;
-  data: UserProfile | null;
+  data: Profile | null;
   error: Error | null;
 } {
   const { setProfile, logout, profile } = useAuth();
 
-  const query = useQuery<ProfileResponse, Error, ProfileResponse, string[]>({
+  const query = useQuery<Profile, Error, Profile, string[]>({
     queryKey: ['useProfile'],
     queryFn: fetchProfile,
     retry: false,
     enabled: !profile,
-    onSuccess: (data: ProfileResponse) => {
+    onSuccess: (data: Profile) => {
       if (data && !profile) {
-        setProfile(new UserProfile(data.profile, data.wallet));
+        setProfile(data);
       }
     },
     onError: () => {
       logout();
     },
-  } as UseQueryOptions<ProfileResponse, Error, ProfileResponse, string[]>);
+  } as UseQueryOptions<Profile, Error, Profile, string[]>);
 
   return {
     isLoading: query.isFetching,

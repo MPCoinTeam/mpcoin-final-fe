@@ -1,38 +1,39 @@
-import { Address } from 'viem';
-
-// Base token type without balance-related fields
-export interface BaseToken {
-  address: Address;
-  symbol: string;
-  name: string;
-  decimals: number;
-  logoURI: string;
-}
-
-// Full token type with all fields
-export interface Token extends BaseToken {
-  balance: string;
-  balanceInUSD: string;
-  price: number;
-  inflationRate: number;
-}
-
 export interface Chain {
-  chain_id: string;
-  explorer_url: string;
   id: string;
+  chainId: string;
+  explorerUrl: string;
   name: string;
-  native_currency: string;
-  rpc_url: string;
+  nativeCurrency: string;
+  rpcUrl: string;
 }
 
-export interface TokenResponse {
-  chain_id: string;
-  contract_address: string;
-  decimals: number;
+export interface Token {
   id: string;
-  logo_url: string;
+  chainId: string;
+  contractAddress: string;
+  decimals: number;
+  logoUrl: string;
   name: string;
   symbol: string;
   type: string;
+}
+
+export interface TokenPrice extends Token {
+  currentPrice: number;
+  inflationRate: number;
+}
+
+export interface TokenBalance extends TokenPrice {
+  balance: string;
+  balanceInUSD: string;
+}
+
+export interface PriceData {
+  currentPrice: number;
+  yesterdayPrice: number;
+}
+
+export interface TokenRate {
+  currentPrice: number;
+  inflationRate: number;
 }

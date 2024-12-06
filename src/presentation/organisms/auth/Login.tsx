@@ -32,7 +32,6 @@ export default function LoginScreen() {
   }
 
   const handleLogin = () => {
-    console.log('handleLogin', email, password);
     const validationErrors = verifyPassword();
     if (validationErrors.length === 0) {
       login({ email, password });

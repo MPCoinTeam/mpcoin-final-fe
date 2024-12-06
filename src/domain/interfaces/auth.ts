@@ -1,4 +1,5 @@
-import { UserWallet } from './wallet';
+import { User } from './user';
+import { Wallet } from './wallet';
 
 export interface AuthRequest {
   email: string;
@@ -6,13 +7,8 @@ export interface AuthRequest {
 }
 
 export interface AuthResponse {
-  profile: User;
-  wallet: UserWallet;
-  access_token: string;
-  refresh_token: string;
-}
-
-export interface ProfileResponse {
-  profile: User;
-  wallet: UserWallet;
+  user: User;
+  wallet: Wallet;
+  accessToken: string;
+  refreshToken: string;
 }

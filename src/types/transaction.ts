@@ -5,3 +5,5 @@ export const TransactionStatusColors = {
   Pending: '#FFC107',
   Failed: '#F44336',
 } as const;
+
+export type TransactionType = 'Sent' | 'Received';

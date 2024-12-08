@@ -39,9 +39,8 @@ export default TransactionItem;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 6,
-    marginBottom: 2,
     paddingHorizontal: 10,
+    marginTop: 10,
     width: '100%',
   },
   content: {

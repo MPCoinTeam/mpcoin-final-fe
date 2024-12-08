@@ -2,7 +2,7 @@ import { Colors } from '@/common/constants/Colors';
 import { useLogin } from '@/domain/usecases/hooks/users/useLogin';
 import Button from '@/presentation/atoms/Button';
 import ThemedInput from '@/presentation/atoms/ThemedInput';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function LoginScreen() {
@@ -12,7 +12,7 @@ export default function LoginScreen() {
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
 
-  const { isPending, login } = useLogin();
+  const { isPending, login, error } = useLogin();
 
   const setErrorsWithTimeout = (newErrors: string[]) => {
     setErrors(newErrors);
@@ -39,6 +39,12 @@ export default function LoginScreen() {
       setErrorsWithTimeout(validationErrors);
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setErrorsWithTimeout(['Invalid email or password']);
+    }
+  }, [error]);
 
   return (
     <SafeAreaView style={styles.safeArea}>

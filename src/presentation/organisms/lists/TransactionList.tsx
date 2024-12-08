@@ -1,10 +1,11 @@
 import { Transaction } from '@/domain/interfaces/transaction';
 import { useTransactions } from '@/domain/usecases/hooks/transactions/useTransactions';
+import { ThemedView } from '@/presentation/atoms/ThemedView';
 import NullList from '@/presentation/molecules/NullList';
 import TransactionItem from '@/presentation/molecules/transaction/TransactionItem';
 import TransactionDetailModal from '@/presentation/organisms/modals/TransactionDetailModal';
 import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 
 export default function TransactionList(): React.JSX.Element {
   const { transactions, pagination, fetchNextPage, isLoading } = useTransactions();
@@ -45,7 +46,7 @@ export default function TransactionList(): React.JSX.Element {
   }
 
   return (
-    <>
+    <ThemedView style={styles.view}>
       <ScrollView onScroll={handleScroll} scrollEventThrottle={400}>
         {transactionList}
         {isLoading && <ActivityIndicator style={{ padding: 20 }} />}
@@ -58,6 +59,14 @@ export default function TransactionList(): React.JSX.Element {
           closeModal={closeModal}
         />
       )}
-    </>
+    </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  view: {
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%',
+  },
+});

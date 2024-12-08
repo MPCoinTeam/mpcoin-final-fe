@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/authContext';
 import axiosInstance from '@/domain/https/https';
-import { AuthRequest, AuthResponse } from '@/domain/interfaces/auth';
+import { AuthRequest, AuthResponse } from '@/domain/interfaces/api';
 import { Profile } from '@/domain/interfaces/profile';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 

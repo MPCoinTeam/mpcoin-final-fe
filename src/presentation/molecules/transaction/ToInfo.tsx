@@ -1,5 +1,5 @@
 import { ThemedText } from '@/presentation/atoms/ThemedText';
-import { getDisplayValue } from '@/utils/formatters';
+import { getDisplayValue, toFormattedShortDate } from '@/utils/formatters';
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -13,7 +13,7 @@ export const ToInfo = memo(({ to, date }: ToInfoProps) => (
     <ThemedText style={styles.address} numberOfLines={1} ellipsizeMode="middle">
       To: {getDisplayValue(to, 'address')}
     </ThemedText>
-    <ThemedText style={styles.date}>{date}</ThemedText>
+    <ThemedText style={styles.date}>{toFormattedShortDate(date)}</ThemedText>
   </View>
 ));
 

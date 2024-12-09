@@ -6,5 +6,5 @@ export default {
     },
     access_token: 'abvcan',
     refetch_token: 'abvcan',
-  }
+  },
 };

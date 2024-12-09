@@ -11,8 +11,8 @@ export default function profile(config: AxiosRequestConfig) {
           wallet_address: '0xb238A3b3cC27239eb78DC5bF01a8ab6538b04B83',
           name: 'Account 1',
           network: 'Sepolia',
-        }
-      }
+        },
+      },
     },
   };
 }

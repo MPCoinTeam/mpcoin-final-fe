@@ -8,7 +8,7 @@ import { ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
-import{ useEffect } from 'react';
+import { useEffect } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 export default function RootLayout() {
@@ -42,13 +42,13 @@ export default function RootLayout() {
           <AssetsProvider>
             <ThemeProvider value={myTheme}>
               <SafeAreaView style={styles.container}>
-            <JsStack
-              screenOptions={{
-                headerShown: false,
-                gestureEnabled: false, // Disable swipe gesture
-              }}
-            ></JsStack>
-            </SafeAreaView>
+                <JsStack
+                  screenOptions={{
+                    headerShown: false,
+                    gestureEnabled: false, // Disable swipe gesture
+                  }}
+                ></JsStack>
+              </SafeAreaView>
             </ThemeProvider>
           </AssetsProvider>
         </ViemProvider>

@@ -16,7 +16,7 @@ export default function signUp(config: AxiosRequestConfig) {
         },
         access_token: 'abvcan',
         refetch_token: 'abvcan',
-      }
+      },
     },
   };
 }

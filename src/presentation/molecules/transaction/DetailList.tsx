@@ -1,6 +1,7 @@
 import { DetailRow } from './DetailRow';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import { TransactionStatus } from '@/types/transaction';
+import { toFormattedDate } from '@/utils/formatters';
 import { ScrollView, StyleSheet } from 'react-native';
 
 interface DetailListProps {

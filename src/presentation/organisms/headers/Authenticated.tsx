@@ -1,5 +1,5 @@
 import { DEFAULT_AVATAR } from '@/common/constants/Environments';
-import { useProfile } from '@/domain/usecases/hooks/users/useProfile';
+import { useAuth } from '@/context/authContext';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
@@ -18,17 +18,16 @@ interface AuthenticatedHeaderProps {
 }
 
 export default function AuthenticatedHeader({ onOpenModal, navigation }: AuthenticatedHeaderProps) {
-  const { isLoading, data } = useProfile();
-  if (isLoading) return <ThemedLoading />;
-  if (!data) return <></>;
+  const { profile } = useAuth();
+  if (!profile) return <ThemedLoading />;
   return (
     <ThemedView style={styles.view}>
       <TouchableOpacity
         style={styles.profileView}
-        onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={data} />)}
+        onPress={() => onOpenModal(({ closeModal }) => <AccountModal closeModal={closeModal} profile={profile} />)}
       >
-        <Image source={{ uri: data.user.avatar ?? DEFAULT_AVATAR }} style={styles.profileIcon} />
-        <ThemedText>{truncateText(data.wallet.address, 'hash')}</ThemedText>
+        <Image source={{ uri: profile?.user?.avatar ?? DEFAULT_AVATAR }} style={styles.profileIcon} />
+        <ThemedText>{truncateText(profile.wallet.address, 'hash')}</ThemedText>
         <ThemedIcon name="qr-code" size={15} style={styles.qrProfileIcon} />
       </TouchableOpacity>
       <ThemedView style={styles.actionView}>

@@ -2,6 +2,7 @@ import { CHAINS } from '@/common/constants/Assets';
 import { Token } from '@/domain/interfaces/assets';
 import { Transaction } from '@/domain/interfaces/transaction';
 import { TransactionStatus } from '@/types/transaction';
+import { toFormattedDate } from '@/utils/formatters';
 import { createContext, useContext, useMemo } from 'react';
 import { Address, Chain, PublicClient, createPublicClient, erc20Abi, formatEther, formatUnits, http } from 'viem';
 
@@ -82,7 +83,7 @@ export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children
         gasLimit: receipt.gasUsed.toString(),
         gasPrice: formatUnits(receipt.effectiveGasPrice, 9),
         nonce: receipt.transactionIndex.toString(),
-        timestamp: txns[index].timestamp,
+        timestamp: toFormattedDate(txns[index].timestamp),
         network: DEFAULT_CHAIN.name,
       }));
     } catch (error) {
@@ -97,7 +98,7 @@ export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children
       fetchTransactionReceipts,
       fetchTokenBalance,
     }),
-    [publicClient],
+    [publicClient, fetchTransactionReceipts, fetchTokenBalance],
   );
 
   return <viemContext.Provider value={contextValue}>{children}</viemContext.Provider>;

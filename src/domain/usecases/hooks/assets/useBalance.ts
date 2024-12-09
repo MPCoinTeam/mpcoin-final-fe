@@ -1,7 +1,7 @@
-import { useProfile } from '../users/useProfile';
 import { useTokenPrices } from './usePrice';
 import { REFRESH_INTERVAL } from '@/common/constants/Environments';
 import { useAssetsContext } from '@/context/assetsContext';
+import { useAuth } from '@/context/authContext';
 import { useViem } from '@/context/viemContext';
 import { Token, TokenBalance, TokenRate } from '@/domain/interfaces/assets';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
@@ -36,7 +36,7 @@ async function fetchBalances(
 export function useBalance() {
   const { tokens } = useAssetsContext();
   const { fetchTokenBalance, currentChain } = useViem();
-  const { data: profile } = useProfile();
+  const { profile } = useAuth();
   const { data: tokenPrices } = useTokenPrices();
 
   const chainId = currentChain.id;

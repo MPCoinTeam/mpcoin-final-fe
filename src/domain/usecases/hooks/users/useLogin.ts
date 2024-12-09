@@ -1,21 +1,14 @@
 import { useAuth } from '@/context/authContext';
-import axiosInstance from '@/domain/https/https';
+import { apis } from '@/domain/https/https';
 import { AuthRequest, AuthResponse } from '@/domain/interfaces/api';
 import { Profile } from '@/domain/interfaces/profile';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
-
-const postLogin = async (request: AuthRequest): Promise<AuthResponse> => {
-  const {
-    data: { payload },
-  } = await axiosInstance.post('/auth/login', request);
-  return payload;
-};
 
 export function useLogin() {
   const { login, setProfile } = useAuth();
 
   const mutation = useMutation<AuthResponse, Error, AuthRequest>({
-    mutationFn: postLogin,
+    mutationFn: apis.login,
     onSuccess: (data) => {
       const profile: Profile = {
         user: data.user,

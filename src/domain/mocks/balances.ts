@@ -1,14 +1,13 @@
 export default {
   payload: {
-    balances:
-    [
+    balances: [
       {
         token_id: 'token_id1',
         token_name: 'token_name1',
         contract_address: 'contract_address',
         token_symbol: 'ETH',
         decimals: 9,
-        balance: 2100000000 ,
+        balance: 2100000000,
         updated_at: new Date(),
       },
       {
@@ -20,6 +19,6 @@ export default {
         balance: 3200000000,
         updated_at: new Date(),
       },
-    ]
-  }
+    ],
+  },
 };

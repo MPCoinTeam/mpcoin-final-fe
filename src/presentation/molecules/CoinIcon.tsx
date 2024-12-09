@@ -37,7 +37,7 @@ const CoinIconMap: { [key in CoinIconType]: CoinIconMapItem } = {
 export default function CoinIcon({ size, type }: CoinIconProps) {
   const coinMap = useMemo(() => CoinIconMap[type], [type]);
   return (
-    <ThemedView style={{...styles.view, height: size*3/2, width: size*3/2}}>
+    <ThemedView style={{ ...styles.view, height: (size * 3) / 2, width: (size * 3) / 2 }}>
       <ThemedIcon style={styles.icon} size={size} name={coinMap.name} type={coinMap.type} />
     </ThemedView>
   );

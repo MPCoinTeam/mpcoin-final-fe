@@ -32,7 +32,7 @@ export default function LogoutScreen() {
         onDismiss: () => router.back(),
       },
     );
-  }, []);
+  }, [handlerLogout]);
 
   return <View />;
 }

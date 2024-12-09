@@ -1,9 +1,8 @@
-import { AuthContext } from '@/context/authContext';
+import { useAuth } from '@/context/authContext';
 import { Redirect } from 'expo-router';
-import { useContext } from 'react';
 
 const Protected = ({ children }: { children: React.JSX.Element }) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Redirect href="/auth/policy" />;
 };
 

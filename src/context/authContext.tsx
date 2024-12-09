@@ -1,3 +1,4 @@
+import { apis } from '@/domain/https/https';
 import { Profile } from '@/domain/interfaces/profile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType>({
-  isLoading: false,
+  isLoading: true,
   isAuthenticated: false,
   profile: null,
   login: async () => {},
@@ -27,37 +28,59 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [authState, setAuthState] = useState({
-    isLoading: true,
-    isAuthenticated: false,
-    profile: null as Profile | null,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [profile, setProfileState] = useState<Profile | null>(null);
 
   const loadToken = async () => {
     try {
       const accessToken = await AsyncStorage.getItem('access_token');
-      if (accessToken) {
-        setAuthState((prev) => ({ ...prev, isAuthenticated: true }));
+      const refreshToken = await AsyncStorage.getItem('refresh_token');
+
+      if (accessToken && refreshToken) {
+        console.log('Authenticated');
+        setIsAuthenticated(true);
+
+        // Fetch profile from API after loading tokens
+        const profileResponse = await apis.getProfile();
+        setProfileState(profileResponse); // Set profile in context
+      } else {
+        console.log('Not authenticated');
+        setIsAuthenticated(false);
       }
     } catch (error) {
       console.error('Failed to load token:', error);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const login = async (accessToken: string, refreshToken: string) => {
-    await AsyncStorage.setItem('access_token', accessToken);
-    await AsyncStorage.setItem('refresh_token', refreshToken);
-    setAuthState((prev) => ({ ...prev, isAuthenticated: true }));
+    try {
+      await AsyncStorage.setItem('access_token', accessToken);
+      await AsyncStorage.setItem('refresh_token', refreshToken);
+      setIsAuthenticated(true);
+      console.log('Login success');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem('access_token');
-    await AsyncStorage.removeItem('refresh_token');
-    setAuthState({ isAuthenticated: false, profile: null, isLoading: false });
+    try {
+      await AsyncStorage.removeItem('access_token');
+      await AsyncStorage.removeItem('refresh_token');
+      setIsAuthenticated(false);
+      setProfileState(null);
+      console.log('Logged out');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const setProfile = (profile: Profile | null) => {
-    setAuthState((prev) => ({ ...prev, profile }));
+    setProfileState(profile);
   };
 
   useEffect(() => {
@@ -67,9 +90,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        isLoading: authState.isLoading,
-        isAuthenticated: authState.isAuthenticated,
-        profile: authState.profile,
+        isLoading,
+        isAuthenticated,
+        profile,
         login,
         logout,
         setProfile,

@@ -28,3 +28,11 @@ export interface CreateTransactionResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface TransactionsResponse {
+  transactions: { txHash: string; updatedAt: string }[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}

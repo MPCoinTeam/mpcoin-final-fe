@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/authContext';
 import { useViem } from '@/context/viemContext';
-import { apis } from '@/domain/https/https';
+import { apis } from '@/domain/https/apis/internal';
 import { Transaction } from '@/domain/interfaces/transaction';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
@@ -37,8 +37,8 @@ export function useTransactions(): UseTransactionsReturn {
     isLoading: isLoadingTxns,
     error: txnError,
   } = useQuery({
-    queryKey: ['transactions', currentChain?.id, page],
-    queryFn: () => apis.getTransactions(currentChain.id, page),
+    queryKey: ['transactions', profile?.wallet?.address ?? '', currentChain?.id?.toString() ?? '', page],
+    queryFn: () => apis.getTransactions(profile?.wallet?.address ?? '', currentChain?.id ?? '', page),
     enabled: isQueryEnabled,
   });
 

@@ -14,16 +14,17 @@ export interface AuthResponse {
 }
 
 export interface CreateTransactionRequest {
-  wallet_id: string;
-  token_id: string;
-  to: string;
+  from_address: string;
+  to_address: string;
+  chain_id: number;
+  symbol: string;
   amount: string;
 }
 export interface CreateTransactionResponse {
   id: string;
-  walletId: string;
-  chainId: string;
-  tokenId: string;
+  chainId: number;
+  fromAddress: string;
+  toAddress: string;
   txHash: string;
   createdAt: string;
   updatedAt: string;

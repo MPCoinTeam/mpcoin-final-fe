@@ -8,21 +8,27 @@ interface TokenItemProps {
   symbol: string;
   balance: string;
   balanceInUSD?: string;
-  price?: number;
+  currentPrice?: number;
   inflationRate?: number;
 }
 
-export default function TokenItem({ logoURI, symbol, balance, price = 0, inflationRate = 0, balanceInUSD = '0' }: TokenItemProps): React.JSX.Element {
+export default function TokenItem({
+  logoURI,
+  symbol,
+  balance,
+  currentPrice = 0,
+  inflationRate = 0,
+  balanceInUSD = '0',
+}: TokenItemProps): React.JSX.Element {
   const color = useThemeColor({}, 'icon') as string;
   const formattedBalance = Number(balance || '0').toFixed(2);
-
   return (
     <ThemedView style={styles.view}>
-      <Image source={{ uri: logoURI }} style={styles.icon} />
+      <Image source={{ uri: logoURI }} style={styles.icon} defaultSource={require('@assets/images/default-token.png')} />
       <ThemedView style={styles.priceView}>
         <ThemedText style={styles.titleText}>{symbol}</ThemedText>
         <ThemedText style={{ ...styles.contentText, color }}>
-          ${price.toFixed(2)} ({inflationRate.toFixed(2)}%)
+          ${currentPrice.toFixed(2)} ({inflationRate.toFixed(2)}%)
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.balanceView}>

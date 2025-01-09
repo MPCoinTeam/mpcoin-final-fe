@@ -35,7 +35,7 @@ export default function TransactionList(): React.JSX.Element {
   );
 
   const renderTransactionItem = useCallback(
-    (transaction: Transaction) => <TransactionItem key={transaction.id} {...transaction} onPress={() => openModal(transaction)} />,
+    (transaction: Transaction) => <TransactionItem key={transaction.txHash} {...transaction} onPress={() => openModal(transaction)} />,
     [openModal],
   );
 

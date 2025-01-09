@@ -11,6 +11,7 @@ interface ViemContextType {
   currentChain: Chain;
   fetchTransactionReceipts: (chainId: number, address: Address, txns: { hash: string; timestamp: string }[]) => Promise<Transaction[]>;
   fetchTokenBalance: (chainId: number, walletAddress: Address, token: Token) => Promise<{ token: Token; balance: string }>;
+  calculateGasFee: (chainId: number, fromAddress: Address, toAddress: Address, amount: string) => Promise<string>;
 }
 
 // Default configuration
@@ -25,6 +26,7 @@ const viemContext = createContext<ViemContextType>({
   currentChain: DEFAULT_CHAIN,
   fetchTransactionReceipts: async () => [],
   fetchTokenBalance: async () => ({ token: {} as Token, balance: '0' }),
+  calculateGasFee: async () => '0',
 });
 
 export const useViem = () => useContext(viemContext);
@@ -91,12 +93,35 @@ export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const calculateGasFee = async (chainId: number, fromAddress: Address, toAddress: Address, amount: string): Promise<string> => {
+    try {
+      const valueInWei = BigInt((parseFloat(amount) * 10 ** 18).toFixed(0));
+
+      const gas = await publicClient.estimateGas({
+        to: toAddress,
+        account: fromAddress,
+        value: valueInWei,
+      });
+
+      const gasPrice = await publicClient.getGasPrice(); // Gas price in Wei
+
+      // Calculate the gas fee
+      const gasFee = BigInt(gas) * BigInt(gasPrice); // gas and gasPrice are both in Wei
+      const formattedGasFee = formatUnits(gasFee, 18); // Convert from Wei to ETH
+
+      return formattedGasFee;
+    } catch (error) {
+      return handleError(error, 'calculateGasFee') || '0';
+    }
+  };
+
   const contextValue = useMemo(
     () => ({
       publicClient,
       currentChain: DEFAULT_CHAIN,
       fetchTransactionReceipts,
       fetchTokenBalance,
+      calculateGasFee,
     }),
     [publicClient, fetchTransactionReceipts, fetchTokenBalance],
   );

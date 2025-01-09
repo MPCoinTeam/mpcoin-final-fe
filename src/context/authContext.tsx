@@ -1,4 +1,4 @@
-import { apis } from '@/domain/https/https';
+import { apis } from '@/domain/https/apis/internal';
 import { Profile } from '@/domain/interfaces/profile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
@@ -42,8 +42,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
 
         // Fetch profile from API after loading tokens
-        const profileResponse = await apis.getProfile();
-        setProfileState(profileResponse); // Set profile in context
+        await apis
+          .getProfile()
+          .then(setProfileState)
+          .catch(() => {
+            console.log('Profile not found');
+            logout();
+          });
       } else {
         console.log('Not authenticated');
         setIsAuthenticated(false);

@@ -12,11 +12,12 @@ interface ConfirmStepProps {
   address: string;
   feeUsd: string;
   fee: string;
+  handleConfirm: () => void;
 }
 
 const truncateAddress = (address: string) => `${address.slice(0, 10)}...${address.slice(-10)}`;
 
-export default function ConfirmStep({ setCurrentStep, amount, address, feeUsd, fee }: ConfirmStepProps) {
+export default function ConfirmStep({ setCurrentStep, amount, address, feeUsd, fee, handleConfirm }: ConfirmStepProps) {
   return (
     <>
       <ConfirmHeader title="Tx Review" onBack={() => setCurrentStep(1)} />
@@ -40,7 +41,7 @@ export default function ConfirmStep({ setCurrentStep, amount, address, feeUsd, f
         </Row>
       </InfoCard>
 
-      <FooterWithButton title="Slide To Send" />
+      <FooterWithButton title="Slide To Send" onPress={handleConfirm} />
     </>
   );
 }

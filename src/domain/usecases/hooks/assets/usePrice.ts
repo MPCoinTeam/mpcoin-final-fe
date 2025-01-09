@@ -1,15 +1,14 @@
 import { REFRESH_INTERVAL } from '@/common/constants/Environments';
 import { useAssetsContext } from '@/context/assetsContext';
-import { binanceApi } from '@/domain/https/binance';
+import { apis } from '@/domain/https/apis/binance';
 import { PriceData, Token, TokenRate } from '@/domain/interfaces/assets';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
 async function fetchPriceData(symbol: string): Promise<PriceData> {
-  const [currentData, klineData] = await Promise.all([binanceApi.getCurrentPrice(symbol), binanceApi.getKlines(symbol)]);
-
+  const [currentData, klineData] = await Promise.all([apis.getCurrentPrice(symbol), apis.getKlines(symbol)]);
   return {
-    currentPrice: parseFloat(currentData.data.price ?? '0'),
-    yesterdayPrice: parseFloat(klineData.data[0]?.[4] ?? '0'),
+    currentPrice: parseFloat(currentData.price ?? '0'),
+    yesterdayPrice: parseFloat(klineData[0][4] ?? '0'),
   };
 }
 

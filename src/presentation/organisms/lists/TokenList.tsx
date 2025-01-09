@@ -12,7 +12,6 @@ export default function TokenList({}: TokenListProps): React.JSX.Element {
 
   if (isPending) return <ThemedLoading />;
   if (!tokens?.length) return <NullList title="No tokens" />;
-
   return (
     <ThemedView style={styles.view}>
       {tokens.map((token, i) => (

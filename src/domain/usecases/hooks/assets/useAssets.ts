@@ -1,20 +1,5 @@
-import axiosInstance from '@/domain/https/https';
-import { Chain, Token } from '@/domain/interfaces/assets';
+import { apis } from '@/domain/https/apis/internal';
 import { useQuery } from '@tanstack/react-query';
-
-async function fetchChains(): Promise<Chain[]> {
-  const {
-    data: { payload },
-  } = await axiosInstance.get('/assets/chains');
-  return payload;
-}
-
-async function fetchChainsTokens(chainId: string): Promise<Token[]> {
-  const {
-    data: { payload },
-  } = await axiosInstance.get<{ payload: Token[] }>(`/assets/chains/${chainId}/tokens`);
-  return payload;
-}
 
 const ONE_DAY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
@@ -22,7 +7,7 @@ export function useAssets() {
   // First query to fetch chains - cached indefinitely
   const chainsQuery = useQuery({
     queryKey: ['chains'],
-    queryFn: fetchChains,
+    queryFn: apis.getChains,
     staleTime: Infinity,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
@@ -32,7 +17,7 @@ export function useAssets() {
   // Second query to fetch tokens - cached for 1 day
   const tokensQuery = useQuery({
     queryKey: ['tokens', chainId],
-    queryFn: () => fetchChainsTokens(chainId!),
+    queryFn: () => apis.getTokens(chainId!),
     enabled: !!chainId,
     staleTime: ONE_DAY,
     refetchOnMount: false,

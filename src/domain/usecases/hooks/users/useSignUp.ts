@@ -1,5 +1,5 @@
 import { useAuth } from '@/context/authContext';
-import { apis } from '@/domain/https/https';
+import { apis } from '@/domain/https/apis/internal';
 import { AuthRequest, AuthResponse } from '@/domain/interfaces/api';
 import { Profile } from '@/domain/interfaces/profile';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';

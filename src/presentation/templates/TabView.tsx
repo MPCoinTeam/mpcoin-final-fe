@@ -1,4 +1,5 @@
 import TransactionList from '../organisms/lists/TransactionList';
+import { useTransactions } from '@/domain/usecases/hooks/transactions/useTransactions';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import AppTabBar from '@/presentation/organisms/TabBar';
 import TokenList from '@/presentation/organisms/lists/TokenList';
@@ -25,12 +26,19 @@ const renderScene = SceneMap({
 
 export default function AppTabView() {
   const layout = useWindowDimensions();
+  const { refetchTransactions } = useTransactions();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'tokens', title: 'Tokens' },
     { key: 'history', title: 'History' },
   ]);
+
+  React.useEffect(() => {
+    if (index === 1) {
+      refetchTransactions();
+    }
+  }, [index]);
 
   return (
     <TabView

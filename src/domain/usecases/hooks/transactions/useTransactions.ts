@@ -2,7 +2,7 @@ import { useAuth } from '@/context/authContext';
 import { useViem } from '@/context/viemContext';
 import { apis } from '@/domain/https/apis/internal';
 import { Transaction } from '@/domain/interfaces/transaction';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 import { Address } from 'viem';
 
@@ -21,6 +21,7 @@ interface UseTransactionsReturn {
   isLoading: boolean;
   error?: Error;
   fetchNextPage: () => void;
+  refetchTransactions: () => void;
 }
 
 export function useTransactions(): UseTransactionsReturn {
@@ -36,16 +37,19 @@ export function useTransactions(): UseTransactionsReturn {
     data: txnResponse,
     isLoading: isLoadingTxns,
     error: txnError,
+    refetch: refetchTxns,
   } = useQuery({
     queryKey: ['transactions', profile?.wallet?.address ?? '', currentChain?.id?.toString() ?? '', page],
     queryFn: () => apis.getTransactions(profile?.wallet?.address ?? '', currentChain?.id ?? '', page),
     enabled: isQueryEnabled,
+    staleTime: 30_000,
   });
 
   const {
     data: transactionReceipts,
     isLoading: isLoadingReceipts,
     error: receiptsError,
+    refetch: refetchReceipts,
   } = useQuery({
     queryKey: ['transactionReceipts', currentChain?.id, profile?.wallet?.address, txnResponse?.transactions],
     queryFn: () =>
@@ -56,6 +60,8 @@ export function useTransactions(): UseTransactionsReturn {
       ),
     enabled: isQueryEnabled && !!txnResponse?.transactions?.length,
     staleTime: 30_000,
+    // refetchOnMount: true, // <-- Thêm cái này
+    // refetchOnWindowFocus: true, // <-- Thêm cái này
   });
 
   const fetchNextPage = useCallback(() => {
@@ -75,11 +81,24 @@ export function useTransactions(): UseTransactionsReturn {
     };
   }, [txnResponse, page]);
 
+  const queryClient = useQueryClient(); // <-- Lấy queryClient
+
+  const refetchTransactions = useCallback(async () => {
+    try {
+      await refetchTxns();
+      await refetchReceipts();
+      console.log('Transactions and receipts successfully refetched!');
+    } catch (error) {
+      console.error('Failed to refetch transactions:', error);
+    }
+  }, [queryClient, profile, currentChain, page]);
+
   return {
     transactions: transactionReceipts || [],
     pagination,
     isLoading: isLoadingTxns || isLoadingReceipts,
     error: txnError || receiptsError || undefined,
     fetchNextPage,
+    refetchTransactions,
   };
 }

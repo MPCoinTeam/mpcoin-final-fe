@@ -5,8 +5,8 @@ import { Colors } from '@/common/constants/Colors';
 import { useAuth } from '@/context/authContext';
 import { useViem } from '@/context/viemContext';
 import { getLargeData } from '@/domain/db/store';
-import { apis } from '@/domain/https/apis/internal';
 import { useBalance } from '@/domain/usecases/hooks/assets/useBalance';
+import { useCreateTransaction } from '@/domain/usecases/hooks/transactions/useCreateTransaction';
 import { ThemedLoading } from '@/presentation/atoms/Loading';
 import { ThemedIcon } from '@/presentation/atoms/ThemedIcon';
 import { ThemedText } from '@/presentation/atoms/ThemedText';
@@ -34,6 +34,7 @@ const TransactionFeedback: React.FC<TransactionFeedbackProps> = ({ status }) => 
     return (
       <Pressable style={styles.modalContainer}>
         <ThemedLoading style={styles.centeredContainer} />
+        <ThemedText>Sending transaction...</ThemedText>
       </Pressable>
     );
   }
@@ -70,7 +71,7 @@ export default function SendTokenModal({ closeModal }: SendTokenModalProps) {
   const { profile } = useAuth();
   const { calculateGasFee, currentChain } = useViem();
   const { data: tokenBalance } = useBalance();
-  const [apiStatus, setApiStatus] = useState('');
+  const { createTransaction, isSuccess, isError, isLoading } = useCreateTransaction();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [toAddress, setToAddress] = useState('0xb238A3b3cC27239eb78DC5bF01a8ab6538b04B83');
@@ -128,32 +129,40 @@ export default function SendTokenModal({ closeModal }: SendTokenModalProps) {
       });
       return;
     }
-    setApiStatus('loading');
-    apis
-      .createTransaction({
+
+    createTransaction(
+      {
         chain_id: currentChain.id,
         from_address: profile.wallet.address,
         to_address: toAddress as Address,
         amount,
         symbol: tokenSymbol,
         share_data: shareKey,
-      })
-      .then((response) => {
-        setApiStatus('success');
-        console.log('Transaction response:', response);
-        closeModal();
-      })
-      .catch((error) => {
-        setApiStatus('error');
-        console.error('API error:', error);
-        Toast.show({
-          type: 'error',
-          text1: 'Transaction failed',
-          text2: error.message || 'Unknown error',
-          position: 'top',
-          topOffset: 55,
-        });
-      });
+      },
+      {
+        onSuccess: (data) => {
+          setTimeout(() => {
+            closeModal();
+            Toast.show({
+              type: 'success',
+              text1: 'Transaction sent',
+              text2: 'Your transaction has been successfully sent. Transaction hash: ' + data.txHash,
+              position: 'bottom',
+            });
+          }, 10000);
+        },
+        onError: (error) => {
+          closeModal();
+          console.error('API error:', error);
+          Toast.show({
+            type: 'error',
+            text1: 'Transaction failed',
+            text2: error.message || 'Unknown error',
+            position: 'bottom',
+          });
+        },
+      },
+    );
   };
 
   const steps = useMemo(
@@ -180,7 +189,7 @@ export default function SendTokenModal({ closeModal }: SendTokenModalProps) {
     [toAddress, amount, maxAmount, tokenSymbol, fee, feeUsd, handleConfirm],
   );
 
-  const status = apiStatus === 'loading' ? 'loading' : apiStatus === 'success' ? 'success' : apiStatus === 'error' ? 'error' : '';
+  const status = isSuccess ? 'loading' : isError ? 'error' : isLoading ? 'loading' : '';
   return status ? <TransactionFeedback status={status} /> : <TransactionSteps currentStep={currentStep} steps={steps} />;
 }
 

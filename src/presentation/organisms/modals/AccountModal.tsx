@@ -8,8 +8,9 @@ import { ThemedView } from '@/presentation/atoms/ThemedView';
 import { truncateText } from '@/utils/formatters';
 import * as Clipboard from 'expo-clipboard';
 import { useState } from 'react';
-import { Image, Pressable, StyleSheet } from 'react-native';
+import { Image, Linking, Pressable, StyleSheet } from 'react-native';
 import SvgQRCode from 'react-native-qrcode-svg';
+import Toast from 'react-native-toast-message';
 
 interface AccountProps {
   profile: Profile;
@@ -20,18 +21,29 @@ export default function AccountModal({ profile, closeModal }: AccountProps) {
   const color = useThemeColor({}, 'icon');
   const { currentChain } = useViem();
   const [showFulladdress, setShowFulladdress] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(profile.wallet.address);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // Reset icon sau 2 giây
+    console.log('Copied to clipboard');
   };
+
   return (
     <Pressable style={styles.modalContainer}>
       <ThemedView style={styles.nameView}>
         <Image source={{ uri: profile.user.avatar ?? DEFAULT_AVATAR }} style={styles.profileIcon} />
         <ThemedText style={{ ...styles.accountText, color }}>{profile.user.name ?? DEFAULT_NAME}</ThemedText>
       </ThemedView>
-      <ThemedText numberOfLines={4} style={{ ...styles.addressText, color }}>
+      <ThemedText numberOfLines={4} style={{ ...styles.addressText, color }} onPress={copyToClipboard}>
         {showFulladdress ? profile.wallet.address + '  ' : truncateText(profile.wallet.address, 'hash') + '  '}
-        <ThemedIcon size={14} name="copy" type="Feather" onPress={copyToClipboard} />
+        <ThemedIcon
+          size={14}
+          name={copied ? 'check' : 'copy'} // Đổi sang icon "check" sau khi copy
+          type="Feather"
+          onPress={copyToClipboard}
+        />
       </ThemedText>
       <ThemedView style={styles.qrCodeContainer}>
         <SvgQRCode
@@ -45,7 +57,10 @@ export default function AccountModal({ profile, closeModal }: AccountProps) {
         />
       </ThemedView>
       <ThemedView style={{ ...styles.networkView }}>
-        <ThemedText style={{ ...styles.networkText, color }} onPress={() => console.log('navigate to etherscan')}>
+        <ThemedText
+          style={{ ...styles.networkText, color }}
+          onPress={() => Linking.openURL('https://sepolia.etherscan.io/address/' + profile.wallet.address)}
+        >
           {currentChain?.name || 'Sepolia'}
         </ThemedText>
         <ThemedIcon size={20} name="external-link" type="EvilIcons" />

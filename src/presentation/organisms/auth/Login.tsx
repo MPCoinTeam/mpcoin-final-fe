@@ -49,9 +49,10 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 60}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'} // Thử dùng padding cho Android
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // Giảm offset cho Android
         style={styles.container}
+        enabled // Chỉ bật khi bàn phím xuất hiện
       >
         <Pressable onPress={Keyboard.dismiss} style={styles.pressable}>
           <ScrollView contentContainerStyle={styles.scrollViewContent}>

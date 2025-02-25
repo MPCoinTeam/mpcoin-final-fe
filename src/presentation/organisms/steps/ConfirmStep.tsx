@@ -41,7 +41,7 @@ export default function ConfirmStep({ setCurrentStep, amount, address, feeUsd, f
         </Row>
       </InfoCard>
 
-      <FooterWithButton title="Slide To Send" onPress={handleConfirm} />
+      <FooterWithButton title="Send" onPress={handleConfirm} />
     </>
   );
 }

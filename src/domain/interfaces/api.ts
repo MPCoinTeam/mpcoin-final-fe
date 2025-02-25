@@ -11,6 +11,7 @@ export interface AuthResponse {
   wallet: Wallet;
   accessToken: string;
   refreshToken: string;
+  shareData: string;
 }
 
 export interface CreateTransactionRequest {
@@ -19,6 +20,7 @@ export interface CreateTransactionRequest {
   chain_id: number;
   symbol: string;
   amount: string;
+  share_data: string;
 }
 export interface CreateTransactionResponse {
   id: string;

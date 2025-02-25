@@ -18,7 +18,7 @@ interface ViemContextType {
 const DEFAULT_CHAIN = CHAINS[0];
 const DEFAULT_PUBLIC_CLIENT = createPublicClient({
   chain: DEFAULT_CHAIN,
-  transport: http('https://endpoints.omniatech.io/v1/eth/sepolia/public'),
+  transport: http('https://eth-sepolia.public.blastapi.io'),
 });
 
 const viemContext = createContext<ViemContextType>({
@@ -32,7 +32,14 @@ const viemContext = createContext<ViemContextType>({
 export const useViem = () => useContext(viemContext);
 
 export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const publicClient = useMemo(() => createPublicClient({ chain: DEFAULT_CHAIN, transport: http() }), []);
+  const publicClient = useMemo(
+    () =>
+      createPublicClient({
+        chain: DEFAULT_CHAIN,
+        transport: http('https://eth-sepolia.public.blastapi.io'),
+      }),
+    [],
+  );
 
   const handleError = (error: any, message: string) => {
     console.warn(`[${message}] Error:`, error);
@@ -64,6 +71,14 @@ export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!txns?.length) return [];
 
     try {
+      const transactions = await Promise.all(
+        txns.map((tx) =>
+          publicClient.getTransaction({
+            hash: tx.hash.startsWith('0x') ? (tx.hash as Address) : `0x${tx.hash}`,
+          }),
+        ),
+      );
+
       const receipts = await Promise.all(
         txns.map((tx) =>
           publicClient.getTransactionReceipt({
@@ -72,22 +87,26 @@ export const ViemProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ),
       );
 
-      return receipts.map((receipt, index) => ({
-        id: Number(receipt.transactionIndex),
-        type: receipt.from.toLowerCase() === address.toLowerCase() ? 'Sent' : 'Received',
-        amount: formatEther(receipt.effectiveGasPrice * receipt.gasUsed),
-        token: 'ETH',
-        date: txns[index].timestamp.split(',')[0],
-        status: receipt.status === 'success' ? 'Confirmed' : ('Failed' as TransactionStatus),
-        txHash: receipt.transactionHash,
-        from: receipt.from as Address,
-        to: receipt.to as Address,
-        gasLimit: receipt.gasUsed.toString(),
-        gasPrice: formatUnits(receipt.effectiveGasPrice, 9),
-        nonce: receipt.transactionIndex.toString(),
-        timestamp: toFormattedDate(txns[index].timestamp),
-        network: DEFAULT_CHAIN.name,
-      }));
+      return transactions.map((transaction, index) => {
+        const receipt = receipts[index];
+
+        return {
+          id: Number(receipt.transactionIndex),
+          type: transaction.from.toLowerCase() === address.toLowerCase() ? 'Sent' : 'Received',
+          amount: formatEther(transaction.value), // 🔥 Lấy `value` từ `transaction`
+          token: 'ETH',
+          date: txns[index].timestamp.split(',')[0],
+          status: receipt.status === 'success' ? 'Confirmed' : ('Failed' as TransactionStatus),
+          txHash: receipt.transactionHash,
+          from: transaction.from as Address,
+          to: transaction.to as Address,
+          gasLimit: transaction.gas.toString(),
+          gasPrice: formatUnits(transaction.gasPrice || 0n, 9),
+          nonce: transaction.nonce.toString(),
+          timestamp: toFormattedDate(txns[index].timestamp),
+          network: DEFAULT_CHAIN.name,
+        };
+      });
     } catch (error) {
       return handleError(error, 'fetchTransactionReceipts') || [];
     }

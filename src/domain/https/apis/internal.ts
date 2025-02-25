@@ -12,12 +12,13 @@ const handleResponse = async <T>(promise: Promise<any>): Promise<T> => {
 
 // Create Axios instance
 const { apiUrl } = useConfig();
-const axiosInstance = createAxiosInstance(apiUrl, ['/auth/login', '/auth/register']);
+console.log('apiUrl', apiUrl);
+export const axiosInstance = createAxiosInstance(apiUrl, ['/auth/login', '/auth/register']);
 
 // APIs
 export const apis = {
   login: (request: AuthRequest): Promise<AuthResponse> => handleResponse<AuthResponse>(axiosInstance.post('/auth/login', request)),
-  signup: (request: AuthRequest): Promise<AuthResponse> => handleResponse<AuthResponse>(axiosInstance.post('/auth/register', request)),
+  signup: (request: AuthRequest): Promise<AuthResponse> => handleResponse<AuthResponse>(axiosInstance.post('/auth/signup', request)),
   getProfile: (): Promise<Profile> => handleResponse<Profile>(axiosInstance.get('/users/me')),
   getChains: (): Promise<Chain[]> => handleResponse<Chain[]>(axiosInstance.get('/assets/chains')),
   getTokens: (chainId: string): Promise<Token[]> => handleResponse<Token[]>(axiosInstance.get(`/assets/chains/${chainId}/tokens`)),
@@ -26,5 +27,5 @@ export const apis = {
       axiosInstance.get('/transactions', { params: { wallet_address: walletAddress, chain_id: chainId, page, page_size: 10 } }),
     ),
   createTransaction: (request: CreateTransactionRequest): Promise<CreateTransactionResponse> =>
-    handleResponse<CreateTransactionResponse>(axiosInstance.post('/transactions', request)),
+    handleResponse<CreateTransactionResponse>(axiosInstance.post('/transactions/', request)),
 };

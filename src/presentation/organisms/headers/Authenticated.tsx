@@ -38,7 +38,13 @@ export default function AuthenticatedHeader({ onOpenModal, navigation }: Authent
           type="FontAwesome"
           onPress={() => onOpenModal(({ closeModal }) => <SendTokenModal closeModal={closeModal} />)}
         />
-        <ThemedIcon name="scan" size={25} style={styles.qrIcon} type="Ionicons" onPress={() => onOpenModal(() => <ScannnerModal />)} />
+        <ThemedIcon
+          name="scan"
+          size={25}
+          style={styles.qrIcon}
+          type="Ionicons"
+          onPress={() => onOpenModal(() => <ScannnerModal onOpenModal={onOpenModal} />)}
+        />
       </ThemedView>
     </ThemedView>
   );

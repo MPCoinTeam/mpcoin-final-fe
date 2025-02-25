@@ -1,11 +1,12 @@
 import { Colors } from '@/common/constants/Colors';
-import { useSignup } from '@/domain/usecases/hooks/users/useSignUp';
 import Button from '@/presentation/atoms/Button';
 import ThemedInput from '@/presentation/atoms/ThemedInput';
-import { useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function SignupScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,8 +14,6 @@ export default function SignupScreen() {
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
   const confirmPasswordRef = useRef<TextInput>(null);
-
-  const { signup, isPending } = useSignup();
 
   const setErrorsWithTimeout = (newErrors: string[]) => {
     setErrors(newErrors);
@@ -34,35 +33,29 @@ export default function SignupScreen() {
     return conditions.filter(Boolean);
   }
 
-  const handleSignup = () => {
+  const handleSignup = useCallback(() => {
     const errors = verifyPassword();
     if (errors.length > 0) {
       setErrorsWithTimeout(errors);
       return;
     }
-    signup(
-      { email, password },
-      {
-        onSuccess: () => {
-          console.log('Signup successful');
-        },
-        onError: (error: any) => {
-          const errorMessage = error?.response?.data?.message || 'Signup failed. Please try again.';
-          setErrorsWithTimeout([errorMessage]);
-        },
-      },
-    );
-  };
+
+    router.push({
+      pathname: '/auth/generating',
+      params: { email, password },
+    });
+  }, [email, password, router]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 60}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'} // Thử dùng padding cho Android
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // Giảm offset cho Android
         style={styles.container}
+        enabled // Chỉ bật khi bàn phím xuất hiện
       >
         <Pressable onPress={Keyboard.dismiss} style={styles.pressable}>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
             <View style={styles.topContent}>
               <Text style={styles.title}>Sign Up</Text>
               <Text style={styles.subtitle}>Create your first wallet</Text>
@@ -107,7 +100,7 @@ export default function SignupScreen() {
                 returnKeyType="done"
                 onSubmitEditing={handleSignup}
               />
-              <Button title="Sign Up" onPress={handleSignup} disabled={isPending} style={null} />
+              <Button title="Sign Up" onPress={handleSignup} style={null} />
             </View>
           </ScrollView>
         </Pressable>

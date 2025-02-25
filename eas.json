@@ -1,0 +1,17 @@
+{
+  "cli": {
+    "version": ">= 14.5.0",
+    "appVersionSource": "remote"
+  },
+    "build": {
+      "preview": {
+        "ios": {
+          "simulator": true
+        }
+      },
+      "production": {}
+    },
+  "submit": {
+    "production": {}
+  }
+}

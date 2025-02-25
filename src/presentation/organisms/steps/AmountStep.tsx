@@ -21,14 +21,17 @@ export default function AmountStep({ setCurrentStep, amount, setAmount, maxAmoun
 
     if (amount === '0' && num !== '.') {
       setAmount(num);
-    } else {
-      const newAmount = amount + num;
+      return;
+    }
 
-      if (Number(newAmount) > Number(maxAmount)) {
-        setAmount(maxAmount);
-      } else {
-        setAmount(newAmount);
-      }
+    const newAmount = amount + num;
+    const parsedAmount = parseFloat(newAmount);
+    const parsedMaxAmount = parseFloat(maxAmount);
+
+    if (parsedAmount > parsedMaxAmount) {
+      setAmount(parsedMaxAmount.toString());
+    } else {
+      setAmount(newAmount);
     }
   };
 

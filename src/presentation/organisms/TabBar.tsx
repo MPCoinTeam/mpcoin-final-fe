@@ -9,7 +9,7 @@ interface AppTabBarProps extends TabBarProps<Route> {
 }
 
 export default function AppTabBar(props: AppTabBarProps) {
-  const inputRange = useMemo(() => props.navigationState.routes.map((_, i) => i), []);
+  // const inputRange = useMemo(() => props.navigationState.routes.map((_, i) => i), []);
   const textColor = useThemeColor({}, 'text');
   const selectedTextColor = useThemeColor({}, 'selectedText');
   return (
@@ -31,7 +31,7 @@ export default function AppTabBar(props: AppTabBarProps) {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    paddingTop: StatusBar.currentHeight,
+    // paddingTop: StatusBar.currentHeight,
     borderBottomWidth: 1,
     borderBottomColor: '#2A2A2A',
   },

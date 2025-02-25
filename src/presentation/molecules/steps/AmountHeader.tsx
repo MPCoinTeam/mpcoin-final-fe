@@ -6,12 +6,14 @@ import { Pressable, StyleSheet } from 'react-native';
 export function AmountHeader({ onBack, tokenSymbol }: { onBack: () => void; tokenSymbol: string }) {
   return (
     <ThemedView style={styles.header}>
-      <Pressable onPress={onBack}>
-        <ThemedIcon name="arrow-back-circle-outline" size={32} type="Ionicons" style={styles.color} />
+      <Pressable onPress={onBack} style={styles.backButton}>
+        <ThemedIcon name="arrow-back-circle-outline" size={32} type="Ionicons" style={styles.iconColor} />
       </Pressable>
       <ThemedView style={styles.tokenBadge}>
-        <ThemedIcon name="ethereum" size={20} style={styles.color} type="MaterialCommunityIcons" />
-        <ThemedText style={styles.tokenText}>{tokenSymbol}</ThemedText>
+        <ThemedIcon name="ethereum" size={20} type="MaterialCommunityIcons" style={styles.iconColor} />
+        <ThemedText style={styles.tokenText} numberOfLines={1} ellipsizeMode="tail">
+          {tokenSymbol}
+        </ThemedText>
       </ThemedView>
     </ThemedView>
   );
@@ -23,8 +25,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 10, // Added padding for better spacing
   },
-  color: {
+  backButton: {
+    padding: 4, // Added hit area for better tap responsiveness
+  },
+  iconColor: {
     color: '#6286ff',
   },
   tokenBadge: {
@@ -32,14 +38,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#2A2A2A',
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 6, // Slightly increased for balance
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#6286ff',
     gap: 8,
+    maxWidth: '60%', // Prevent badge from growing too wide
   },
   tokenText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#FFFFFF', // Explicit color for consistency
   },
 });

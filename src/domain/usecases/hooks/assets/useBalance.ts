@@ -47,7 +47,7 @@ export function useBalance() {
     queryFn: () => fetchBalances(chainId!, walletAddress!, tokens, fetchTokenBalance, tokenPrices!),
     enabled: Boolean(walletAddress && chainId && tokenPrices),
     staleTime: REFRESH_INTERVAL,
-    refetchInterval: REFRESH_INTERVAL,
+    refetchInterval: false,
   } as UseQueryOptions<TokenBalance[], Error>);
 
   return {

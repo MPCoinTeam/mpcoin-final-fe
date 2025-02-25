@@ -1,4 +1,5 @@
 import { Colors } from '@/common/constants/Colors';
+import { toastConfig } from '@/common/toastConfig';
 import { AssetsProvider } from '@/context/assetsContext';
 import { AuthProvider } from '@/context/authContext';
 import { ViemProvider } from '@/context/viemContext';
@@ -8,8 +9,11 @@ import { ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
+import { SQLiteDatabase, SQLiteProvider } from 'expo-sqlite';
 import { useEffect } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
 export default function RootLayout() {
   const myTheme = useTheme();
@@ -48,6 +52,7 @@ export default function RootLayout() {
                     gestureEnabled: false, // Disable swipe gesture
                   }}
                 ></JsStack>
+                <Toast config={toastConfig} />
               </SafeAreaView>
             </ThemeProvider>
           </AssetsProvider>
@@ -63,3 +68,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.background,
   },
 });
+
+async function migrateDbIfNeeded(db: SQLiteDatabase) {
+  await db.execAsync(`
+    CREATE TABLE share (id TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL);
+    `);
+}

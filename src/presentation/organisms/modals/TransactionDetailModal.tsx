@@ -4,7 +4,7 @@ import { FooterWithButton } from '@/presentation/molecules/steps/Footer';
 import { DetailHeader } from '@/presentation/molecules/transaction/DetailHeader';
 import { DetailList } from '@/presentation/molecules/transaction/DetailList';
 import { TransactionStatus } from '@/types/transaction';
-import { Modal, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Linking, Modal, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 interface TransactionDetailModalProps {
   txHash: string;
@@ -49,7 +49,7 @@ export default function TransactionDetailModal({
           icon={<ThemedIcon name="compass" size={20} lightColor="#fff" darkColor="#fff" type="Ionicons" />}
           style={styles.footer}
           onPress={() => {
-            console.log('View on Explorer');
+            Linking.openURL(`https://sepolia.etherscan.io/tx/${txHash}`);
           }}
         />
       </ThemedView>

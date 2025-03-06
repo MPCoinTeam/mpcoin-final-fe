@@ -3,14 +3,21 @@
     "version": ">= 14.5.0",
     "appVersionSource": "remote"
   },
-    "build": {
-      "preview": {
-        "ios": {
-          "simulator": true
-        }
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
       },
-      "production": {}
+      "ios": {
+        "simulator": true
+      }
     },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  },
   "submit": {
     "production": {}
   }

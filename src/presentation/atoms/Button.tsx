@@ -13,15 +13,17 @@ interface ButtonProps {
 
 const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false, type = 'primary', style, icon }) => {
   const backgroundColor = useThemeColor({}, `${type}Button`);
+  const typeStyles = getTypeStyles(type, backgroundColor);
 
-  const buttonStyles = [styles.button, disabled ? styles.disabledButton : getTypeStyles(type, backgroundColor), style];
+  const buttonStyles = [styles.button, disabled ? styles.disabledButton : typeStyles, style];
+  const textStyle = [{ color: typeStyles.color }, styles.text];
 
   return (
     <View style={styles.container}>
       <Pressable style={buttonStyles} onPress={onPress} disabled={disabled}>
         <ThemedView style={styles.buttonContent}>
           {icon && <View style={styles.icon}>{icon}</View>}
-          <Text style={styles.text}>{title}</Text>
+          <Text style={textStyle}>{title}</Text>
         </ThemedView>
       </Pressable>
     </View>
@@ -29,13 +31,14 @@ const ThemedButton: React.FC<ButtonProps> = ({ title, onPress, disabled = false,
 };
 
 const getTypeStyles = (type: string, backgroundColor: string) => {
-  if (type === 'outline') {
+  if (type === 'secondary') {
     return {
       borderWidth: 1,
       borderColor: '#4F6EF7',
+      color: '#4F6EF7',
     };
   }
-  return { backgroundColor };
+  return { backgroundColor, color: '#FFFFFF' };
 };
 
 const styles = StyleSheet.create({

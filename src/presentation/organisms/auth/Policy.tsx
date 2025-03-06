@@ -5,7 +5,6 @@ import { ThemedText } from '@/presentation/atoms/ThemedText';
 import { ThemedView } from '@/presentation/atoms/ThemedView';
 import Checkbox from 'expo-checkbox';
 import { useRouter } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -49,26 +48,16 @@ export default function PolicyScreen() {
           <Button
             title="Continue with Google"
             onPress={() => {
-              // Toast.show({
-              //   type: 'info',
-              //   text1: '🔧 Feature Unavailable',
-              //   text2: 'Google login is not available at the moment. Please try again later.',
-              //   position: 'top',
-              //   topOffset: 55,
-              // });
-              SecureStore.setItemAsync('123', 'ok_123').then(() => {
-                console.log('SecureStore.setItemAsync success');
+              Toast.show({
+                type: 'info',
+                text1: '🔧 Feature Unavailable',
+                text2: 'Google login is not available at the moment. Please try again later.',
+                position: 'top',
+                topOffset: 55,
               });
             }}
             disabled={!isChecked}
             type="outline"
-          />
-          <Button
-            title="Get Data"
-            onPress={() => {
-              const data = SecureStore.getItem('123');
-              console.log('SecureStore.getItem', data);
-            }}
           />
         </ThemedView>
       </ThemedView>

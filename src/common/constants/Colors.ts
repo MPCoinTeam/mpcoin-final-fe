@@ -12,7 +12,7 @@ const tintColorDark = '#fff';
 
 // Button colors
 const primaryButtonColor = '#4F6EF7';
-const secondaryButtonColor = '#2C2C2E';
+const secondaryButtonColor = 'transparent';
 
 // Additional color definitions
 const errorColor = '#FF3B30'; // Error state color
@@ -50,7 +50,7 @@ export const Colors = {
     tabIconSelected: tintColorDark, // Selected tab icon color for dark mode
     primaryButton: primaryButtonColor, // Primary button color for dark mode
     secondaryButton: secondaryButtonColor, // Secondary button color for dark mode
-    outlineButton: 'transparent', // Outline button color for dark mode
+    outlineButton: '#1f1f21', // Outline button color for dark mode
     error: errorColor, // Error color for alerts in dark mode
     success: successColor, // Success color for notifications in dark mode
     warning: warningColor, // Warning color for alerts in dark mode
